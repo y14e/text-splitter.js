@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<style>
+@import "https://cdn.jsdelivr.net/npm/destyle.css@4.0.1/destyle.min.css";
+@import "https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Noto+Sans+JP:wght@100..900&display=swap";
+:root {
+  font-size: 10px;
+}
+body {
+  font: 2.4rem / 1.5 Inter, "Noto Sans JP", serif;
+  padding: 3.2rem;
+}
+[data-split-text]:not(.is-animate) {
+  visibility: hidden;
+}
+[data-char] {
+  opacity: 0;
+  transition-delay: calc(var(--char-index) / var(--char-length) * 3s);
+  transition-duration: 0.3s;
+  transition-property: opacity, transform;
+  transform: scale(0.8) translateX(-2.4rem);
+  .is-animate & {
+    opacity: 1;
+    transform: scale(1) translateX(0);
+  }
+}
+a {
+  text-decoration: underline;
+  transition: 0.3s opacity;
+  &:hover {
+    opacity: 0.5;
+  }
+  * {
+    all: inherit;
+    [data-char] {
+      display: inline-block;
+    }
+  }
+}
+b [data-char=","] {
+  color: initial;
+  font-weight: initial;
+}
+</style>
+</head>
+<body>
+<p data-split-text>🐻<b style="color: #66c;">Lorem ipsum</b>, dolor <b style="color: #c69;">sit amet</b>, consectetur <b style="color: #f96;">adipiscing elit</b>, sed do eiusmod tempor (incididunt) ut labore et <a href="#">dolore magna</a> aliqua. Ut enim ad [minim veniam], quis nostrud {exercitation} ullamco laboris nisi ut aliquip ex ea “commodo consequat”. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.🐻‍❄️</p>
+<br><br><br><br><br>
+<p data-split-text data-no-line-break-rule>🐻<b style="color: #66c;">Lorem ipsum</b> dolor <b style="color: #c69;">sit amet</b>, consectetur <b style="color: #f96;">adipiscing elit</b>, sed do eiusmod tempor (incididunt) ut labore et <a href="#">dolore magna</a> aliqua. Ut enim ad [minim veniam], quis nostrud {exercitation} ullamco laboris nisi ut aliquip ex ea “commodo consequat”. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. 🐻‍❄️禁則処理なし</p>
+<br><br><br><br><br>
+<p data-split-text>🐻波瀾も曲折もない<b style="color: #66c;">単調な生活</b>を続けて来た時、私は<b style="color: #c69;">少なからず</b>驚きました。鄭寧に重ねて、<b style="color: #f96;">そりゃご心配</b>ですね（笑々）といったまま、<a href="#">腕組みをしてくれ</a>といいました。えゝ来ました。日本人、ことに「『日本』の若い女」は、そんな【利害の念】に頭を悩ます余地がなかった。そうすると過去が指し示す路を今まで通り積み重ねて行かせようとした昼の中に異様な調子をもって生れた性格の相違から出て来いという意味も籠っているのは詰らん人間に限るといった。🐻‍❄️</p>
+<br><br><br><br><br>
+<p data-split-text data-no-line-break-rule>🐻波瀾も曲折もない<b style="color: #66c;">単調な生活</b>を続けて来た時、私は<b style="color: #c69;">少なからず</b>驚きました。鄭寧に重ねて、<b style="color: #f96;">そりゃご心配</b>ですね（笑々）といったまま、<a href="#">腕組みをしてくれ</a>といいました。えゝ来ました。日本人、ことに「『日本』の若い女」は、そんな【利害の念】に頭を悩ます余地がなかった。そうすると過去が指し示す路を今まで通り積み重ねて行かせようとした昼の中に異様な調子をもって生れた性格の相違から出て来いという意味も籠っているのは詰らん人間に限るといった。🐻‍❄️禁則処理なし</p>
+<script src="split-text.js"></script>
+<script>
+window.addEventListener('load', () => {
+  document.querySelectorAll('[data-split-text]').forEach(a => {
+    a.classList.add('is-animate');
+  });
+});
+</script>
+</body>
+</html>
