@@ -53,13 +53,20 @@ b [data-char=","] {
 <p data-text-splitter>🐻波瀾も曲折もない<b style="color: #66c;">単調な生活</b>を続けて来た時、私は<b style="color: #c69;">少なからず</b>驚きました。鄭寧に重ねて、<b style="color: #f96;">そりゃご心配</b>ですね（笑々）といったまま、<a href="#">腕組みをしてくれ</a>といいました。えゝ来ました。日本人、ことに「『日本』の若い女」は、そんな【利害の念】に頭を悩ます余地がなかった。そうすると過去が指し示す路を今まで通り積み重ねて行かせようとした昼の中に異様な調子をもって生れた性格の相違から出て来いという意味も籠っているのは詰らん人間に限るといった。🐻‍❄️</p>
 <br><br><br><br><br>
 <p data-text-splitter data-no-line-break-rule>🐻波瀾も曲折もない<b style="color: #66c;">単調な生活</b>を続けて来た時、私は<b style="color: #c69;">少なからず</b>驚きました。鄭寧に重ねて、<b style="color: #f96;">そりゃご心配</b>ですね（笑々）といったまま、<a href="#">腕組みをしてくれ</a>といいました。えゝ来ました。日本人、ことに「『日本』の若い女」は、そんな【利害の念】に頭を悩ます余地がなかった。そうすると過去が指し示す路を今まで通り積み重ねて行かせようとした昼の中に異様な調子をもって生れた性格の相違から出て来いという意味も籠っているのは詰らん人間に限るといった。🐻‍❄️禁則処理なし</p>
-<script src="text-splitter.js"></script>
-<script>
+<script type="module">
+import TextSplitter from './text-splitter.js';
+window.addEventListener('DOMContentLoaded', () => {
+  document.querySelectorAll('[data-text-splitter]').forEach(a => {
+    new TextSplitter(a);
+  });
+});
 window.addEventListener('load', () => {
   document.querySelectorAll('[data-text-splitter]').forEach(a => {
     a.classList.add('is-animate');
   });
 });
+</script>
+<script>
 </script>
 </body>
 </html>
