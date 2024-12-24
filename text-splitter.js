@@ -1,4 +1,4 @@
-// text-splitter [20241224]
+// text-splitter [20241225]
 export default class TextSplitter {
   constructor(a) {
     const b = a.style;
@@ -42,39 +42,39 @@ export default class TextSplitter {
     if (!a.hasAttribute('data-no-line-break-rule')) {
       const INVALID_LINE_START_CHARS = ['!', ')', ',', '-', '.', ':', ';', '?', ']', '}', '‐', '’', '”', '、', '。', '々', '〉', '》', '」', '』', '】', '〕', '〗', '〙', '〞', '〟', 'ゝ', 'ゞ', '゠', '・', 'ヽ', 'ヾ', '！', '）', '，', '．', '：', '；', '？', '］', '｝', '｠'];
       const INVALID_LINE_END_CHARS = ['(', '[', '{', '‘', '“', '〈', '《', '「', '『', '【', '〔', '〖', '〘', '〝', '（', '［', '｛', '｟'];
-      let b;
+      let c;
       for (let i = 0; i < d.length; i++) {
-        const a = d[i];
-        if (a.parentElement.matches('[data-text-splitter]') && b && INVALID_LINE_START_CHARS.some(b => {
-          return b === a.textContent;
+        const b = d[i];
+        if (b.parentElement === a && c && INVALID_LINE_START_CHARS.some(a => {
+          return a === b.textContent;
         })) {
-          b.textContent += a.textContent;
-          b.dataset.word += a.textContent;
-          a.remove();
+          c.textContent += b.textContent;
+          c.dataset.word += b.textContent;
+          b.remove();
           d.splice(i, 1);
           i--;
         } else {
-          b = a;
+          c = b;
         }
       }
-      d.forEach((a, i) => {
-        if (a.parentElement.matches('[data-text-splitter]') && INVALID_LINE_END_CHARS.some(b => {
-          return b === a.textContent;
+      d.forEach((b, i) => {
+        if (b.parentElement === a && INVALID_LINE_END_CHARS.some(a => {
+          return a === b.textContent;
         })) {
-          let b = d[i + 1];
-          while (b && INVALID_LINE_END_CHARS.some(a => {
-            return a === b.textContent;
+          let c = d[i + 1];
+          while (c && INVALID_LINE_END_CHARS.some(a => {
+            return a === c.textContent;
           })) {
-            a.textContent += b.textContent;
-            a.dataset.word += b.dataset.word;
-            b.remove();
+            b.textContent += c.textContent;
+            b.dataset.word += c.dataset.word;
+            c.remove();
             d.splice(i + 1, 1);
-            b = d[i + 1];
+            c = d[i + 1];
           }
-          if (b) {
-            b.textContent = a.textContent + b.textContent;
-            b.dataset.word = a.dataset.word + b.dataset.word;
-            a.remove();
+          if (c) {
+            c.textContent = b.textContent + c.textContent;
+            c.dataset.word = b.dataset.word + c.dataset.word;
+            b.remove();
             d.splice(i, 1);
           }
         }
