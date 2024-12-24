@@ -43,7 +43,7 @@ const initializeTextSplitter = a => {
     let b;
     for (let i = 0; i < d.length; i++) {
       const a = d[i];
-      if (a.parentElement.matches('[data-split-text]') && b && INVALID_LINE_START_CHARS.some(b => {
+      if (a.parentElement.matches('[data-text-splitter]') && b && INVALID_LINE_START_CHARS.some(b => {
         return b === a.textContent;
       })) {
         b.textContent += a.textContent;
@@ -56,7 +56,7 @@ const initializeTextSplitter = a => {
       }
     }
     d.forEach((a, i) => {
-      if (a.parentElement.matches('[data-split-text]') && INVALID_LINE_END_CHARS.some(b => {
+      if (a.parentElement.matches('[data-text-splitter]') && INVALID_LINE_END_CHARS.some(b => {
         return b === a.textContent;
       })) {
         let b = d[i + 1];
@@ -116,7 +116,7 @@ const initializeTextSplitter = a => {
   });
 };
 window.addEventListener('DOMContentLoaded', () => {
-  document.querySelectorAll('[data-split-text]').forEach(a => {
+  document.querySelectorAll('[data-text-splitter]').forEach(a => {
     initializeTextSplitter(a);
   });
 });
