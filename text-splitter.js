@@ -1,4 +1,4 @@
-// text-splitter [20241223b]
+// text-splitter [20241224]
 const initializeTextSplitter = a => {
   const b = a.style;
   const c = (a, b = 'char') => {
@@ -15,11 +15,12 @@ const initializeTextSplitter = a => {
     };
     [...a.childNodes].forEach(f => {
       if (f.nodeType === 3) {
-        [...new Intl.Segmenter(a.closest('[lang]')?.getAttribute('lang') || 'en', b === 'word' ? { granularity: 'word' } : {}).segment(f.textContent.replace(/[\r\n\t]/g, '').replace(/\s{2,}/g, ' '))].forEach(a => {
-          const c = a.segment.trim();
-          const f = g([b, !c && 'whitespace'].filter(Boolean), c || ' ');
-          d.push(f);
-          e.push(f);
+        const c = a.closest('[lang]');
+        [...new Intl.Segmenter(c ? c.lang : 'en', b === 'word' ? { granularity: 'word' } : {}).segment(f.textContent.replace(/[\r\n\t]/g, '').replace(/\s{2,}/g, ' '))].forEach(a => {
+          const f = a.segment.trim();
+          const h = g([b, !f && 'whitespace'].filter(Boolean), f || ' ');
+          d.push(h);
+          e.push(h);
         });
         return;
       }
