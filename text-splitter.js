@@ -45,9 +45,7 @@ export default class TextSplitter {
       let c;
       for (let i = 0; i < d.length; i++) {
         const b = d[i];
-        if (b.parentElement === a && c && INVALID_LINE_START_CHARS.some(a => {
-          return a === b.textContent;
-        })) {
+        if (b.parentElement === a && c && INVALID_LINE_START_CHARS.some(a => a === b.textContent)) {
           c.textContent += b.textContent;
           c.dataset.word += b.textContent;
           b.remove();
@@ -58,13 +56,9 @@ export default class TextSplitter {
         }
       }
       d.forEach((b, i) => {
-        if (b.parentElement === a && INVALID_LINE_END_CHARS.some(a => {
-          return a === b.textContent;
-        })) {
+        if (b.parentElement === a && INVALID_LINE_END_CHARS.some(a => a === b.textContent)) {
           let c = d[i + 1];
-          while (c && INVALID_LINE_END_CHARS.some(a => {
-            return a === c.textContent;
-          })) {
+          while (c && INVALID_LINE_END_CHARS.some(a => a === c.textContent)) {
             b.textContent += c.textContent;
             b.dataset.word += c.dataset.word;
             c.remove();
