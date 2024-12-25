@@ -1,4 +1,4 @@
-export default class TextSplitter {
+export default class {
   constructor(a, options) {
     this.options = {...{ lineBreak: true }, ...options};
     this.lineBreak = options.lineBreak;
