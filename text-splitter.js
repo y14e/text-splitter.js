@@ -1,5 +1,6 @@
 export default class TextSplitter {
-  constructor(a) {
+  constructor(a, options = { lineBreak: true }) {
+    this.lineBreak = options.lineBreak;
     const b = a.style;
     const c = (a, b = 'char') => {
       const d = [];
@@ -38,7 +39,7 @@ export default class TextSplitter {
     }
     let d = c(a, 'word');
     //* Apply line break rule (Kinsoku)
-    if (!a.hasAttribute('data-no-line-break-rule')) {
+    if (this.lineBreak) {
       const INVALID_LINE_START_CHARS = ['!', ')', ',', '-', '.', ':', ';', '?', ']', '}', '‐', '’', '”', '、', '。', '々', '〉', '》', '」', '』', '】', '〕', '〗', '〙', '〞', '〟', 'ゝ', 'ゞ', '゠', '・', 'ヽ', 'ヾ', '！', '）', '，', '．', '：', '；', '？', '］', '｝', '｠'];
       const INVALID_LINE_END_CHARS = ['(', '[', '{', '‘', '“', '〈', '《', '「', '『', '【', '〔', '〖', '〘', '〝', '（', '［', '｛', '｟'];
       let c;
