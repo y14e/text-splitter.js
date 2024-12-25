@@ -1,7 +1,7 @@
 export default class {
   constructor(a, options) {
     this.options = {...{ lineBreak: true }, ...options};
-    this.lineBreak = options.lineBreak;
+    this.lineBreak = this.options.lineBreak;
     const b = a.style;
     const c = (a, b = 'char') => {
       const d = [];
