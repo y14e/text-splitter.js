@@ -1,4 +1,4 @@
-// text-splitter [20241225]
+// text-splitter [20241225a]
 export default class TextSplitter {
   constructor(a) {
     const b = a.style;
