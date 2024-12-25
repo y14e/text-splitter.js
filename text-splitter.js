@@ -1,5 +1,6 @@
 export default class TextSplitter {
-  constructor(a, options = { lineBreak: true }) {
+  constructor(a, options) {
+    this.options = {...{ lineBreak: true }, ...options};
     this.lineBreak = options.lineBreak;
     const b = a.style;
     const c = (a, b = 'char') => {
