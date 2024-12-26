@@ -1,7 +1,8 @@
 export default class {
   constructor(a, options) {
-    this.options = { ...{ lineBreak: true }, ...options };
+    this.options = { ...{ lineBreak: true, wordBreak: false }, ...options };
     this.lineBreak = this.options.lineBreak;
+    this.wordBreak = this.options.wordBreak;
     const b = a.style;
     const c = (a, b = 'char') => {
       const d = [];
@@ -18,7 +19,7 @@ export default class {
       [...a.childNodes].forEach(f => {
         if (f.nodeType === 3) {
           const c = a.closest('[lang]');
-          [...new Intl.Segmenter(c ? c.lang : 'en', b === 'word' ? { granularity: 'word' } : {}).segment(f.textContent.replace(/[\r\n\t]/g, '').replace(/\s{2,}/g, ' '))].forEach(a => {
+          [...new Intl.Segmenter(c ? c.lang : 'en', b === 'word' && !this.wordBreak ? { granularity: 'word' } : {}).segment(f.textContent.replace(/[\r\n\t]/g, '').replace(/\s{2,}/g, ' '))].forEach(a => {
             const c = a.segment.trim();
             const f = g([b, !c && 'whitespace'].filter(Boolean), c || ' ');
             d.push(f);
@@ -41,7 +42,7 @@ export default class {
     let d = c(a, 'word');
     //* Apply line break rule (Kinsoku)
     if (this.lineBreak) {
-      const INVALID_LINE_START_CHARS = new Set(['!', ')', ',', '-', '.', ':', ';', '?', ']', '}', '‐', '’', '”', '‥', '…', '、', '。', '々', '〉', '》', '」', '』', '】', '〕', '〗', '〙', '〞', '〟', 'ゝ', 'ゞ', '゠', '・', 'ヽ', 'ヾ', '！', '）', '，', '．', '：', '；', '？', '］', '｝', '｠']);
+      const INVALID_LINE_START_CHARS = new Set(['!', ')', ',', '-', '.', ':', ';', '?', ']', '}', '‐', '’', '”', '‥', '…', '、', '。', '々', '〉', '》', '」', '』', '】', '〕', '〗', '〙', '〞', '〟', 'ぁ', 'ぃ', 'ぅ', 'ぇ', 'ぉ', 'っ', 'ゃ', 'ゅ', 'ょ', 'ゎ', 'ゕ', 'ゖ', '゚', 'ゝ', 'ゞ', '゠', 'ァ', 'ィ', 'ゥ', 'ェ', 'ォ', 'ッ', 'ャ', 'ュ', 'ョ', 'ヮ', 'ヵ', 'ヶ', '・', 'ー', 'ヽ', 'ヾ', 'ㇰ', 'ㇱ', 'ㇲ', 'ㇳ', 'ㇴ', 'ㇵ', 'ㇶ', 'ㇷ', 'ㇸ', 'ㇹ', 'ㇺ', 'ㇻ', 'ㇼ', 'ㇽ', 'ㇾ', 'ㇿ', '！', '）', '，', '．', '：', '；', '？', '］', '｝', '｠']);
       const INVALID_LINE_END_CHARS = new Set(['(', '[', '{', '‘', '“', '〈', '《', '「', '『', '【', '〔', '〖', '〘', '〝', '（', '［', '｛', '｟']);
       const INVALID_SEPARATE_CHARS = new Set(['―', '‥', '…']);
       let b;
