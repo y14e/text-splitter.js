@@ -56,7 +56,7 @@ export default class {
       };
       for (let i = 0; i < d.length; i++) {
         const c = d[i];
-        if (c.parentElement === a && b && INVALID_LINE_START_CHARS.includes(c.textContent)) {
+        if (b && INVALID_LINE_START_CHARS.includes(c.textContent)) {
           b.dataset.word = b.textContent += c.textContent;
           c.remove();
           d.splice(i, 1);
@@ -67,7 +67,7 @@ export default class {
       }
       for (let i = 0; i < d.length; i++) {
         const b = d[i];
-        if (b.parentElement === a && INVALID_LINE_END_CHARS.includes(b.textContent)) {
+        if (INVALID_LINE_END_CHARS.includes(b.textContent)) {
           c(b, INVALID_LINE_END_CHARS, i);
           const a = d[i + 1];
           if (a) {
@@ -79,7 +79,7 @@ export default class {
       }
       for (let i = 0; i < d.length; i++) {
         const b = d[i];
-        if (b.parentElement === a && INVALID_SEPARATE_CHARS.includes(b.textContent)) {
+        if (INVALID_SEPARATE_CHARS.includes(b.textContent)) {
           c(b, INVALID_SEPARATE_CHARS, i);
         }
       }
