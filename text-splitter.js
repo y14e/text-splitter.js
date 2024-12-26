@@ -1,6 +1,6 @@
 export default class {
   constructor(a, options) {
-    this.options = {...{ lineBreak: true }, ...options};
+    this.options = { ...{ lineBreak: true }, ...options };
     this.lineBreak = this.options.lineBreak;
     const b = a.style;
     const c = (a, b = 'char') => {
@@ -19,10 +19,10 @@ export default class {
         if (f.nodeType === 3) {
           const c = a.closest('[lang]');
           [...new Intl.Segmenter(c ? c.lang : 'en', b === 'word' ? { granularity: 'word' } : {}).segment(f.textContent.replace(/[\r\n\t]/g, '').replace(/\s{2,}/g, ' '))].forEach(a => {
-            const f = a.segment.trim();
-            const h = g([b, !f && 'whitespace'].filter(Boolean), f || ' ');
-            d.push(h);
-            e.push(h);
+            const c = a.segment.trim();
+            const f = g([b, !c && 'whitespace'].filter(Boolean), c || ' ');
+            d.push(f);
+            e.push(f);
           });
           return;
         }
@@ -41,39 +41,49 @@ export default class {
     let d = c(a, 'word');
     //* Apply line break rule (Kinsoku)
     if (this.lineBreak) {
-      const INVALID_LINE_START_CHARS = ['!', ')', ',', '-', '.', ':', ';', '?', ']', '}', '‐', '’', '”', '、', '。', '々', '〉', '》', '」', '』', '】', '〕', '〗', '〙', '〞', '〟', 'ゝ', 'ゞ', '゠', '・', 'ヽ', 'ヾ', '！', '）', '，', '．', '：', '；', '？', '］', '｝', '｠'];
+      const INVALID_LINE_START_CHARS = ['!', ')', ',', '-', '.', ':', ';', '?', ']', '}', '‐', '’', '”', '‥', '…', '、', '。', '々', '〉', '》', '」', '』', '】', '〕', '〗', '〙', '〞', '〟', 'ゝ', 'ゞ', '゠', '・', 'ヽ', 'ヾ', '！', '）', '，', '．', '：', '；', '？', '］', '｝', '｠'];
       const INVALID_LINE_END_CHARS = ['(', '[', '{', '‘', '“', '〈', '《', '「', '『', '【', '〔', '〖', '〘', '〝', '（', '［', '｛', '｟'];
-      let c;
+      const INVALID_SEPARATE_CHARS = ['―', '‥', '…'];
+      let b;
       for (let i = 0; i < d.length; i++) {
-        const b = d[i];
-        if (b.parentElement === a && c && INVALID_LINE_START_CHARS.some(a => a === b.textContent)) {
-          c.textContent += b.textContent;
-          c.dataset.word += b.textContent;
-          b.remove();
+        const c = d[i];
+        if (c.parentElement === a && b && INVALID_LINE_START_CHARS.some(a => a === c.textContent)) {
+          b.dataset.word = b.textContent += c.textContent;
+          c.remove();
           d.splice(i, 1);
           i--;
         } else {
-          c = b;
+          b = c;
         }
       }
       d.forEach((b, i) => {
         if (b.parentElement === a && INVALID_LINE_END_CHARS.some(a => a === b.textContent)) {
-          let c = d[i + 1];
-          while (c && INVALID_LINE_END_CHARS.some(a => a === c.textContent)) {
-            b.textContent += c.textContent;
-            b.dataset.word += c.dataset.word;
-            c.remove();
+          let a = d[i + 1];
+          while (a && INVALID_LINE_END_CHARS.some(b => b === a.textContent)) {
+            b.dataset.word = b.textContent += a.textContent;
+            a.remove();
             d.splice(i + 1, 1);
-            c = d[i + 1];
+            a = d[i + 1];
           }
-          if (c) {
-            c.textContent = b.textContent + c.textContent;
-            c.dataset.word = b.dataset.word + c.dataset.word;
+          if (a) {
+            a.dataset.word = a.textContent = b.textContent + a.textContent;
             b.remove();
             d.splice(i, 1);
           }
         }
       });
+      for (let i = 0; i < d.length; i++) {
+        const b = d[i];
+        if (b.parentElement === a && INVALID_SEPARATE_CHARS.some(a => a === b.textContent)) {
+          const j = i + 1;
+          while (d[j] && INVALID_SEPARATE_CHARS.some(a => a === d[j].textContent)) {
+            const a = d[j];
+            b.dataset.word = b.textContent += a.textContent;
+            a.remove();
+            d.splice(j, 1);
+          }
+        }
+      }
     }
     //*/
     const f = c(a);
