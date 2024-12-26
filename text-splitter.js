@@ -47,7 +47,7 @@ export default class {
       let b;
       const c = (a, b, i) => {
         const j = i + 1;
-        while (d[j] && b.includes(d[j].textContent)) {
+        while (d[j] && b.has(d[j].textContent)) {
           const c = d[j];
           a.dataset.word = a.textContent += c.textContent;
           c.remove();
