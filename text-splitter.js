@@ -82,18 +82,7 @@ export default class {
       a.style.setProperty('--word-index', i);
       if (!a.hasAttribute('data-whitespace')) {
         const b = document.createElement('span');
-        b.style.cssText = `
-          border: 0;
-          clip: rect(0, 0, 0, 0);
-          height: 1px;
-          margin: -1px;
-          overflow: hidden;
-          padding: 0;
-          position: absolute;
-          user-select: none; // Optional
-          white-space: nowrap;
-          width: 1px;
-        `;
+        b.style.cssText = 'border:0;clip:rect(0,0,0,0);height:1px;margin:-1px;overflow:hidden;padding:0;position:absolute;user-select:none;white-space:nowrap;width:1px;';
         b.textContent = a.textContent;
         a.appendChild(b);
       }
