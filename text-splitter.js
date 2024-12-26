@@ -45,9 +45,18 @@ export default class {
       const INVALID_LINE_END_CHARS = ['(', '[', '{', '‘', '“', '〈', '《', '「', '『', '【', '〔', '〖', '〘', '〝', '（', '［', '｛', '｟'];
       const INVALID_SEPARATE_CHARS = ['―', '‥', '…'];
       let b;
+      const c = (a, b, i) => {
+        const j = i + 1;
+        while (d[j] && b.includes(d[j].textContent)) {
+          const c = d[j];
+          a.dataset.word = a.textContent += c.textContent;
+          c.remove();
+          d.splice(j, 1);
+        }
+      };
       for (let i = 0; i < d.length; i++) {
         const c = d[i];
-        if (c.parentElement === a && b && INVALID_LINE_START_CHARS.some(a => a === c.textContent)) {
+        if (c.parentElement === a && b && INVALID_LINE_START_CHARS.includes(c.textContent)) {
           b.dataset.word = b.textContent += c.textContent;
           c.remove();
           d.splice(i, 1);
@@ -56,32 +65,22 @@ export default class {
           b = c;
         }
       }
-      d.forEach((b, i) => {
-        if (b.parentElement === a && INVALID_LINE_END_CHARS.some(a => a === b.textContent)) {
-          let a = d[i + 1];
-          while (a && INVALID_LINE_END_CHARS.some(b => b === a.textContent)) {
-            b.dataset.word = b.textContent += a.textContent;
-            a.remove();
-            d.splice(i + 1, 1);
-            a = d[i + 1];
-          }
+      for (let i = 0; i < d.length; i++) {
+        const b = d[i];
+        if (b.parentElement === a && INVALID_LINE_END_CHARS.includes(b.textContent)) {
+          c(b, INVALID_LINE_END_CHARS, i);
+          const a = d[i + 1];
           if (a) {
             a.dataset.word = a.textContent = b.textContent + a.textContent;
             b.remove();
             d.splice(i, 1);
           }
         }
-      });
+      }
       for (let i = 0; i < d.length; i++) {
         const b = d[i];
-        if (b.parentElement === a && INVALID_SEPARATE_CHARS.some(a => a === b.textContent)) {
-          const j = i + 1;
-          while (d[j] && INVALID_SEPARATE_CHARS.some(a => a === d[j].textContent)) {
-            const a = d[j];
-            b.dataset.word = b.textContent += a.textContent;
-            a.remove();
-            d.splice(j, 1);
-          }
+        if (b.parentElement === a && INVALID_SEPARATE_CHARS.includes(b.textContent)) {
+          c(b, INVALID_SEPARATE_CHARS, i);
         }
       }
     }
