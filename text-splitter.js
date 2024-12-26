@@ -41,9 +41,9 @@ export default class {
     let d = c(a, 'word');
     //* Apply line break rule (Kinsoku)
     if (this.lineBreak) {
-      const INVALID_LINE_START_CHARS = ['!', ')', ',', '-', '.', ':', ';', '?', ']', '}', '‐', '’', '”', '‥', '…', '、', '。', '々', '〉', '》', '」', '』', '】', '〕', '〗', '〙', '〞', '〟', 'ゝ', 'ゞ', '゠', '・', 'ヽ', 'ヾ', '！', '）', '，', '．', '：', '；', '？', '］', '｝', '｠'];
-      const INVALID_LINE_END_CHARS = ['(', '[', '{', '‘', '“', '〈', '《', '「', '『', '【', '〔', '〖', '〘', '〝', '（', '［', '｛', '｟'];
-      const INVALID_SEPARATE_CHARS = ['―', '‥', '…'];
+      const INVALID_LINE_START_CHARS = new Set(['!', ')', ',', '-', '.', ':', ';', '?', ']', '}', '‐', '’', '”', '‥', '…', '、', '。', '々', '〉', '》', '」', '』', '】', '〕', '〗', '〙', '〞', '〟', 'ゝ', 'ゞ', '゠', '・', 'ヽ', 'ヾ', '！', '）', '，', '．', '：', '；', '？', '］', '｝', '｠']);
+      const INVALID_LINE_END_CHARS = new Set(['(', '[', '{', '‘', '“', '〈', '《', '「', '『', '【', '〔', '〖', '〘', '〝', '（', '［', '｛', '｟']);
+      const INVALID_SEPARATE_CHARS = new Set(['―', '‥', '…']);
       let b;
       const c = (a, b, i) => {
         const j = i + 1;
@@ -56,7 +56,7 @@ export default class {
       };
       for (let i = 0; i < d.length; i++) {
         const c = d[i];
-        if (b && INVALID_LINE_START_CHARS.includes(c.textContent)) {
+        if (b && INVALID_LINE_START_CHARS.has(c.textContent)) {
           b.dataset.word = b.textContent += c.textContent;
           c.remove();
           d.splice(i, 1);
@@ -67,7 +67,7 @@ export default class {
       }
       for (let i = 0; i < d.length; i++) {
         const b = d[i];
-        if (INVALID_LINE_END_CHARS.includes(b.textContent)) {
+        if (INVALID_LINE_END_CHARS.has(b.textContent)) {
           c(b, INVALID_LINE_END_CHARS, i);
           const a = d[i + 1];
           if (a) {
@@ -79,7 +79,7 @@ export default class {
       }
       for (let i = 0; i < d.length; i++) {
         const b = d[i];
-        if (INVALID_SEPARATE_CHARS.includes(b.textContent)) {
+        if (INVALID_SEPARATE_CHARS.has(b.textContent)) {
           c(b, INVALID_SEPARATE_CHARS, i);
         }
       }
