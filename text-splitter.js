@@ -1,4 +1,4 @@
-const NOBR_REGEXP = /\b[\u0041-\u024F]+\b/g;
+const LATIN_REGEXP = /\b[\u0041-\u024F]+\b/g;
 const LBR_PROHIBIT_START_CHARS = new Set(['!', ')', ',', '-', '.', ':', ';', '?', ']', '}', '‐', '’', '”', '‥', '…', '、', '。', '々', '〉', '》', '」', '』', '】', '〕', '〗', '〙', '〞', '〟', 'ぁ', 'ぃ', 'ぅ', 'ぇ', 'ぉ', 'っ', 'ゃ', 'ゅ', 'ょ', 'ゎ', 'ゕ', 'ゖ', '゚', 'ゝ', 'ゞ', '゠', 'ァ', 'ィ', 'ゥ', 'ェ', 'ォ', 'ッ', 'ャ', 'ュ', 'ョ', 'ヮ', 'ヵ', 'ヶ', '・', 'ー', 'ヽ', 'ヾ', 'ㇰ', 'ㇱ', 'ㇲ', 'ㇳ', 'ㇴ', 'ㇵ', 'ㇶ', 'ㇷ', 'ㇸ', 'ㇹ', 'ㇺ', 'ㇻ', 'ㇼ', 'ㇽ', 'ㇾ', 'ㇿ', '！', '）', '，', '．', '：', '；', '？', '］', '｝', '｠']);
 const LBR_PROHIBIT_END_CHARS = new Set(['(', '[', '{', '‘', '“', '〈', '《', '「', '『', '【', '〔', '〖', '〘', '〝', '（', '［', '｛', '｟']);
 const LBR_INSEPARATABLE_CHARS = new Set(['―', '‥', '…']);
@@ -13,7 +13,7 @@ export default class {
     this._originalHTML = this._element.innerHTML;
     const a = this._element;
     const b = a.style;
-    this._nobr();
+    this._latin();
     const c = this._split('word');
     if (this._lineBreakingRules && !this._concatChar) {
       this._lbr(c, 'word');
@@ -44,19 +44,19 @@ export default class {
       a.innerHTML = '&nbsp;';
     });
   }
-  _nobr() {
+  _latin() {
     const a = b => {
       if (b.nodeType === 3) {
         const a = b.textContent;
-        if (NOBR_REGEXP.test(a)) {
+        if (LATIN_REGEXP.test(a)) {
           const c = document.createDocumentFragment();
           let i = 0;
-          a.replace(NOBR_REGEXP, (b, j) => {
+          a.replace(LATIN_REGEXP, (b, j) => {
             if (j > i) {
               c.appendChild(document.createTextNode(a.slice(i, j)));
             }
             const d = document.createElement('span');
-            d.dataset._nobr = '';
+            d.dataset._latin = '';
             d.textContent = b;
             c.appendChild(d);
             i = j + b.length;
@@ -95,8 +95,8 @@ export default class {
         });
         return;
       }
-      if (a === 'word' && e.tagName && e.hasAttribute('data-_nobr')) {
-        delete e.dataset._nobr;
+      if (a === 'word' && e.tagName && e.hasAttribute('data-_latin')) {
+        delete e.dataset._latin;
         e.dataset.word = e.textContent;
         c.push(e);
         d.push(e);
