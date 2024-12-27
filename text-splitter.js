@@ -4,12 +4,13 @@ const LINE_BREAKING_RULES_PROHIBIT_END_CHARS = new Set(['(', '[', '{', '‘', '�
 const LINE_BREAKING_RULES_PROHIBIT_SEPARATE_CHARS = new Set(['―', '‥', '…']);
 
 export default class {
-  constructor(el, options) {
-    this.el = el;
+  constructor(element, options) {
+    this.element = element;
     this.options = { ...{ concatChar: false, lineBreakingRules: true }, ...options };
     this.concatChar = this.options.concatChar === true;
     this.lineBreakingRules = this.options.lineBreakingRules !== false;
-    const b = el.style;
+    const a = this.element;
+    const b = a.style;
     const c = (a, b) => {
       const d = [];
       const e = [];
@@ -52,14 +53,15 @@ export default class {
       return e;
     }
     this._nobr();
-    const e = c(el, 'word');
+    const e = c(a, 'word');
     if (this.lineBreakingRules && !this.concatChar) {
-      this._applyLineBreakingRules(e, 'word');
+      this._lbr(e, 'word');
     }
-    const f = c(el, 'char');
+    const f = c(a, 'char');
     if (this.lineBreakingRules && this.concatChar) {
-      this._applyLineBreakingRules(f, 'char');
+      this._lbr(f, 'char');
     }
+
     b.setProperty('--word-length', e.length);
     e.forEach((a, i) => {
       a.style.setProperty('--word-index', i);
@@ -75,10 +77,10 @@ export default class {
       a.ariaHidden = 'true';
       a.style.setProperty('--char-index', i);
     });
-    el.querySelectorAll(':is([data-word], [data-char]):not([data-whitespace])').forEach(a => {
+    a.querySelectorAll(':is([data-word], [data-char]):not([data-whitespace])').forEach(a => {
       a.style.display = 'inline-block';
     });
-    el.querySelectorAll('[data-char][data-whitespace]').forEach(a => {
+    a.querySelectorAll('[data-char][data-whitespace]').forEach(a => {
       if (getComputedStyle(a).display !== 'inline') {
         a.innerHTML = '&nbsp;';
       }
@@ -110,50 +112,50 @@ export default class {
       }
       [...b.childNodes].forEach(a);
     };
-    [...this.el.childNodes].forEach(a);
+    [...this.element.childNodes].forEach(a);
   }
-  _applyLineBreakingRules(b, c) {
-    let d;
-    const e = (a, d, i) => {
+  _lbr(a, b) {
+    let c;
+    const d = (c, d, i) => {
       const j = i + 1;
-      while (b[j] && d.has(b[j].textContent)) {
-        const d = b[j];
-        a.dataset[c] = a.textContent += d.textContent;
+      while (a[j] && d.has(a[j].textContent)) {
+        const d = a[j];
+        c.dataset[b] = c.textContent += d.textContent;
         d.remove();
-        b.splice(j, 1);
+        a.splice(j, 1);
       }
     };
-    for (let i = 0; i < b.length; i++) {
-      const a = b[i];
-      if (d && LINE_BREAKING_RULES_PROHIBIT_START_CHARS.has(a.textContent)) {
-        d.dataset[c] = d.textContent += a.textContent;
-        a.remove();
-        b.splice(i, 1);
+    for (let i = 0; i < a.length; i++) {
+      const d = a[i];
+      if (c && LINE_BREAKING_RULES_PROHIBIT_START_CHARS.has(d.textContent)) {
+        c.dataset[b] = c.textContent += d.textContent;
+        d.remove();
+        a.splice(i, 1);
         i--;
       } else {
-        d = a;
+        c = d;
       }
     }
-    for (let i = 0; i < b.length; i++) {
-      const a = b[i];
-      if (LINE_BREAKING_RULES_PROHIBIT_END_CHARS.has(a.textContent)) {
-        e(a, LINE_BREAKING_RULES_PROHIBIT_END_CHARS, i);
-        const d = b[i + 1];
-        if (d) {
-          d.dataset[c] = d.textContent = a.textContent + d.textContent;
-          a.remove();
-          b.splice(i, 1);
+    for (let i = 0; i < a.length; i++) {
+      const c = a[i];
+      if (LINE_BREAKING_RULES_PROHIBIT_END_CHARS.has(c.textContent)) {
+        d(c, LINE_BREAKING_RULES_PROHIBIT_END_CHARS, i);
+        const e = a[i + 1];
+        if (e) {
+          e.dataset[b] = e.textContent = c.textContent + e.textContent;
+          c.remove();
+          a.splice(i, 1);
         }
       }
     }
-    for (let i = 0; i < b.length; i++) {
-      const a = b[i];
-      if (LINE_BREAKING_RULES_PROHIBIT_SEPARATE_CHARS.has(a.textContent)) {
-        e(a, LINE_BREAKING_RULES_PROHIBIT_SEPARATE_CHARS, i);
+    for (let i = 0; i < a.length; i++) {
+      const b = a[i];
+      if (LINE_BREAKING_RULES_PROHIBIT_SEPARATE_CHARS.has(b.textContent)) {
+        d(b, LINE_BREAKING_RULES_PROHIBIT_SEPARATE_CHARS, i);
       }
     }
-    if (c === 'char') {
-      this.el.querySelectorAll('[data-word]:not([data-whitespace])').forEach(a => {
+    if (b === 'char') {
+      this.element.querySelectorAll('[data-word]:not([data-whitespace])').forEach(a => {
         a.textContent ? (a.dataset.word = a.textContent) : a.remove();
       });
     }
