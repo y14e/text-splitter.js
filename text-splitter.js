@@ -12,7 +12,7 @@ export default class {
     this.wordSegmenter = this.options.wordSegmenter === true;
     const a = this.element;
     const b = a.style;
-    this._nobr();
+    this._latin();
     const c = this._split('word');
     if (this.lineBreakingRules && !this.concatChar) {
       this._lbr(c, 'word');
@@ -43,7 +43,7 @@ export default class {
       a.innerHTML = '&nbsp;';
     });
   }
-  _nobr() {
+  _latin() {
     const a = b => {
       if (b.nodeType === 3) {
         const a = b.textContent;
@@ -55,7 +55,7 @@ export default class {
               c.appendChild(document.createTextNode(a.slice(i, j)));
             }
             const d = document.createElement('span');
-            d.dataset.nobr = '';
+            d.dataset._latin = '';
             d.textContent = b;
             c.appendChild(d);
             i = j + b.length;
@@ -94,7 +94,8 @@ export default class {
         });
         return;
       }
-      if (a === 'word' && e.tagName && e.hasAttribute('data-nobr')) {
+      if (a === 'word' && e.tagName && e.hasAttribute('data-_latin')) {
+        delete e.dataset._latin;
         e.dataset.word = e.textContent;
         c.push(e);
         d.push(e);
