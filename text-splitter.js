@@ -161,6 +161,10 @@ export default class {
     }
   }
   revert() {
-    this._element.innerHTML = this._originalHTML;
+    const a = this._element;
+    const b = a.style;
+    b.removeProperty('--word-length');
+    b.removeProperty('--char-length');
+    a.innerHTML = this._originalHTML;
   }
 }
