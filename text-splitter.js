@@ -1,6 +1,6 @@
-const INVALID_LINE_START_CHARS = new Set(['!', ')', ',', '-', '.', ':', ';', '?', ']', '}', '‐', '’', '”', '‥', '…', '、', '。', '々', '〉', '》', '」', '』', '】', '〕', '〗', '〙', '〞', '〟', 'ぁ', 'ぃ', 'ぅ', 'ぇ', 'ぉ', 'っ', 'ゃ', 'ゅ', 'ょ', 'ゎ', 'ゕ', 'ゖ', '゚', 'ゝ', 'ゞ', '゠', 'ァ', 'ィ', 'ゥ', 'ェ', 'ォ', 'ッ', 'ャ', 'ュ', 'ョ', 'ヮ', 'ヵ', 'ヶ', '・', 'ー', 'ヽ', 'ヾ', 'ㇰ', 'ㇱ', 'ㇲ', 'ㇳ', 'ㇴ', 'ㇵ', 'ㇶ', 'ㇷ', 'ㇸ', 'ㇹ', 'ㇺ', 'ㇻ', 'ㇼ', 'ㇽ', 'ㇾ', 'ㇿ', '！', '）', '，', '．', '：', '；', '？', '］', '｝', '｠']);
-const INVALID_LINE_END_CHARS = new Set(['(', '[', '{', '‘', '“', '〈', '《', '「', '『', '【', '〔', '〖', '〘', '〝', '（', '［', '｛', '｟']);
-const INVALID_SEPARATE_CHARS = new Set(['―', '‥', '…']);
+const PROHIBIT_LINE_START_CHARS = new Set(['!', ')', ',', '-', '.', ':', ';', '?', ']', '}', '‐', '’', '”', '‥', '…', '、', '。', '々', '〉', '》', '」', '』', '】', '〕', '〗', '〙', '〞', '〟', 'ぁ', 'ぃ', 'ぅ', 'ぇ', 'ぉ', 'っ', 'ゃ', 'ゅ', 'ょ', 'ゎ', 'ゕ', 'ゖ', '゚', 'ゝ', 'ゞ', '゠', 'ァ', 'ィ', 'ゥ', 'ェ', 'ォ', 'ッ', 'ャ', 'ュ', 'ョ', 'ヮ', 'ヵ', 'ヶ', '・', 'ー', 'ヽ', 'ヾ', 'ㇰ', 'ㇱ', 'ㇲ', 'ㇳ', 'ㇴ', 'ㇵ', 'ㇶ', 'ㇷ', 'ㇸ', 'ㇹ', 'ㇺ', 'ㇻ', 'ㇼ', 'ㇽ', 'ㇾ', 'ㇿ', '！', '）', '，', '．', '：', '；', '？', '］', '｝', '｠']);
+const PROHIBIT_LINE_END_CHARS = new Set(['(', '[', '{', '‘', '“', '〈', '《', '「', '『', '【', '〔', '〖', '〘', '〝', '（', '［', '｛', '｟']);
+const PROHIBIT_SEPARATE_CHARS = new Set(['―', '‥', '…']);
 
 export default class {
   constructor(a, options) {
@@ -9,7 +9,7 @@ export default class {
     this.lineBreak = this.options.lineBreak !== false;
     this.wordBreak = this.options.wordBreak === true;
     const b = a.style;
-    const c = (a, b = 'char') => {
+    const c = (a, b) => {
       const d = [];
       const e = [];
       const f = document.createDocumentFragment();
@@ -44,8 +44,7 @@ export default class {
       a.appendChild(f);
       return e;
     }
-    const d = c(a, 'word');
-    const e = (b, c) => {
+    const d = (b, c) => {
       let d;
       const e = (a, d, i) => {
         const j = i + 1;
@@ -58,7 +57,7 @@ export default class {
       };
       for (let i = 0; i < b.length; i++) {
         const a = b[i];
-        if (d && INVALID_LINE_START_CHARS.has(a.textContent)) {
+        if (d && PROHIBIT_LINE_START_CHARS.has(a.textContent)) {
           d.dataset[c] = d.textContent += a.textContent;
           a.remove();
           b.splice(i, 1);
@@ -69,8 +68,8 @@ export default class {
       }
       for (let i = 0; i < b.length; i++) {
         const a = b[i];
-        if (INVALID_LINE_END_CHARS.has(a.textContent)) {
-          e(a, INVALID_LINE_END_CHARS, i);
+        if (PROHIBIT_LINE_END_CHARS.has(a.textContent)) {
+          e(a, PROHIBIT_LINE_END_CHARS, i);
           const d = b[i + 1];
           if (d) {
             d.dataset[c] = d.textContent = a.textContent + d.textContent;
@@ -81,8 +80,8 @@ export default class {
       }
       for (let i = 0; i < b.length; i++) {
         const a = b[i];
-        if (INVALID_SEPARATE_CHARS.has(a.textContent)) {
-          e(a, INVALID_SEPARATE_CHARS, i);
+        if (PROHIBIT_SEPARATE_CHARS.has(a.textContent)) {
+          e(a, PROHIBIT_SEPARATE_CHARS, i);
         }
       }
       if (c === 'char') {
@@ -91,15 +90,16 @@ export default class {
         });
       }
     };
+    const e = c(a, 'word');
     if (this.lineBreak && this.concatChar === false) {
-      e(d, 'word');
+      d(e, 'word');
     }
-    const f = c(a);
+    const f = c(a, 'char');
     if (this.lineBreak && this.concatChar === true) {
-      e(f, 'char');
+      d(f, 'char');
     }
-    b.setProperty('--word-length', d.length);
-    d.forEach((a, i) => {
+    b.setProperty('--word-length', e.length);
+    e.forEach((a, i) => {
       a.style.setProperty('--word-index', i);
       if (!a.hasAttribute('data-whitespace')) {
         const b = document.createElement('span');
