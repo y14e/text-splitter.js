@@ -6,9 +6,10 @@ const LBR_INSEPARATABLE_CHARS = new Set(['―', '‥', '…']);
 export default class {
   constructor(element, options) {
     this.element = element;
-    this.options = { ...{ concatChar: false, lineBreakingRules: true }, ...options };
+    this.options = { ...{ concatChar: false, lineBreakingRules: true, wordSegmenter: false }, ...options };
     this.concatChar = this.options.concatChar === true;
     this.lineBreakingRules = this.options.lineBreakingRules !== false;
+    this.wordSegmenter = this.options.wordSegmenter === true;
     const a = this.element;
     const b = a.style;
     this._nobr();
@@ -85,7 +86,7 @@ export default class {
     [...b.childNodes].forEach(e => {
       if (e.nodeType === 3) {
         const g = b.closest('[lang]');
-        [...new Intl.Segmenter(g ? g.lang : 'en').segment(e.textContent.replace(/[\r\n\t]/g, '').replace(/\s{2,}/g, ' '))].forEach(b => {
+        [...new Intl.Segmenter(g ? g.lang : 'en', a === 'word' && this.wordSegmenter ? { granularity: 'word' } : {}).segment(e.textContent.replace(/[\r\n\t]/g, '').replace(/\s{2,}/g, ' '))].forEach(b => {
           const e = b.segment.trim();
           const g = f([a, !e && 'whitespace'].filter(Boolean), e || ' ');
           c.push(g);
