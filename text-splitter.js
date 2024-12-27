@@ -61,7 +61,6 @@ export default class {
     if (this.lineBreakingRules && this.concatChar) {
       this._lbr(f, 'char');
     }
-
     b.setProperty('--word-length', e.length);
     e.forEach((a, i) => {
       a.style.setProperty('--word-index', i);
