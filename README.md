@@ -1,4 +1,4 @@
 # text-splitter.js
 A text splitter in JS. Supports line breaking rules (禁則処理).
-# Demo
+## Demo
 https://y14e.github.io/text-splitter.js/
