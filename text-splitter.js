@@ -5,20 +5,21 @@ const LBR_INSEPARATABLE_CHARS = new Set(['―', '‥', '…']);
 
 export default class {
   constructor(element, options) {
-    this.element = element;
-    this.options = { ...{ concatChar: false, lineBreakingRules: true, wordSegmenter: false }, ...options };
-    this.concatChar = this.options.concatChar === true;
-    this.lineBreakingRules = this.options.lineBreakingRules !== false;
-    this.wordSegmenter = this.options.wordSegmenter === true;
-    const a = this.element;
+    this._element = element;
+    this._options = { ...{ concatChar: false, lineBreakingRules: true, wordSegmenter: false }, ...options };
+    this._concatChar = this._options.concatChar === true;
+    this._lineBreakingRules = this._options.lineBreakingRules !== false;
+    this._wordSegmenter = this._options.wordSegmenter === true;
+    this._originalHTML = this._element.innerHTML;
+    const a = this._element;
     const b = a.style;
     this._latin();
     const c = this._split('word');
-    if (this.lineBreakingRules && !this.concatChar) {
+    if (this._lineBreakingRules && !this._concatChar) {
       this._lbr(c, 'word');
     }
     const d = this._split('char');
-    if (this.lineBreakingRules && this.concatChar) {
+    if (this._lineBreakingRules && this._concatChar) {
       this._lbr(d, 'char');
     }
     b.setProperty('--word-length', c.length);
@@ -69,9 +70,9 @@ export default class {
       }
       [...b.childNodes].forEach(a);
     };
-    [...this.element.childNodes].forEach(a);
+    [...this._element.childNodes].forEach(a);
   }
-  _split(a, b = this.element) {
+  _split(a, b = this._element) {
     const c = [];
     const d = [];
     const e = document.createDocumentFragment();
@@ -86,7 +87,7 @@ export default class {
     [...b.childNodes].forEach(e => {
       if (e.nodeType === 3) {
         const g = b.closest('[lang]');
-        [...new Intl.Segmenter(g ? g.lang : 'en', a === 'word' && this.wordSegmenter ? { granularity: 'word' } : {}).segment(e.textContent.replace(/[\r\n\t]/g, '').replace(/\s{2,}/g, ' '))].forEach(b => {
+        [...new Intl.Segmenter(g ? g.lang : 'en', a === 'word' && this._wordSegmenter ? { granularity: 'word' } : {}).segment(e.textContent.replace(/[\r\n\t]/g, '').replace(/\s{2,}/g, ' '))].forEach(b => {
           const e = b.segment.trim();
           const g = f([a, !e && 'whitespace'].filter(Boolean), e || ' ');
           c.push(g);
@@ -154,9 +155,12 @@ export default class {
       }
     }
     if (b === 'char') {
-      this.element.querySelectorAll('[data-word]:not([data-whitespace])').forEach(a => {
+      this._element.querySelectorAll('[data-word]:not([data-whitespace])').forEach(a => {
         a.textContent ? (a.dataset.word = a.textContent) : a.remove();
       });
     }
+  }
+  revert() {
+    this._element.innerHTML = this._originalHTML;
   }
 }
