@@ -1,7 +1,7 @@
 const NOBR_REGEXP = /\b[\u0041-\u024F]+\b/g;
-const LINE_BREAKING_RULES_PROHIBIT_START_CHARS = new Set(['!', ')', ',', '-', '.', ':', ';', '?', ']', '}', '‐', '’', '”', '‥', '…', '、', '。', '々', '〉', '》', '」', '』', '】', '〕', '〗', '〙', '〞', '〟', 'ぁ', 'ぃ', 'ぅ', 'ぇ', 'ぉ', 'っ', 'ゃ', 'ゅ', 'ょ', 'ゎ', 'ゕ', 'ゖ', '゚', 'ゝ', 'ゞ', '゠', 'ァ', 'ィ', 'ゥ', 'ェ', 'ォ', 'ッ', 'ャ', 'ュ', 'ョ', 'ヮ', 'ヵ', 'ヶ', '・', 'ー', 'ヽ', 'ヾ', 'ㇰ', 'ㇱ', 'ㇲ', 'ㇳ', 'ㇴ', 'ㇵ', 'ㇶ', 'ㇷ', 'ㇸ', 'ㇹ', 'ㇺ', 'ㇻ', 'ㇼ', 'ㇽ', 'ㇾ', 'ㇿ', '！', '）', '，', '．', '：', '；', '？', '］', '｝', '｠']);
-const LINE_BREAKING_RULES_PROHIBIT_END_CHARS = new Set(['(', '[', '{', '‘', '“', '〈', '《', '「', '『', '【', '〔', '〖', '〘', '〝', '（', '［', '｛', '｟']);
-const LINE_BREAKING_RULES_PROHIBIT_SEPARATE_CHARS = new Set(['―', '‥', '…']);
+const LBR_PROHIBIT_START_CHARS = new Set(['!', ')', ',', '-', '.', ':', ';', '?', ']', '}', '‐', '’', '”', '‥', '…', '、', '。', '々', '〉', '》', '」', '』', '】', '〕', '〗', '〙', '〞', '〟', 'ぁ', 'ぃ', 'ぅ', 'ぇ', 'ぉ', 'っ', 'ゃ', 'ゅ', 'ょ', 'ゎ', 'ゕ', 'ゖ', '゚', 'ゝ', 'ゞ', '゠', 'ァ', 'ィ', 'ゥ', 'ェ', 'ォ', 'ッ', 'ャ', 'ュ', 'ョ', 'ヮ', 'ヵ', 'ヶ', '・', 'ー', 'ヽ', 'ヾ', 'ㇰ', 'ㇱ', 'ㇲ', 'ㇳ', 'ㇴ', 'ㇵ', 'ㇶ', 'ㇷ', 'ㇸ', 'ㇹ', 'ㇺ', 'ㇻ', 'ㇼ', 'ㇽ', 'ㇾ', 'ㇿ', '！', '）', '，', '．', '：', '；', '？', '］', '｝', '｠']);
+const LBR_PROHIBIT_END_CHARS = new Set(['(', '[', '{', '‘', '“', '〈', '《', '「', '『', '【', '〔', '〖', '〘', '〝', '（', '［', '｛', '｟']);
+const LBR_INSEPARATABLE_CHARS = new Set(['―', '‥', '…']);
 
 export default class {
   constructor(element, options) {
@@ -11,58 +11,17 @@ export default class {
     this.lineBreakingRules = this.options.lineBreakingRules !== false;
     const a = this.element;
     const b = a.style;
-    const c = (a, b) => {
-      const d = [];
-      const e = [];
-      const f = document.createDocumentFragment();
-      const g = (a, b) => {
-        const c = document.createElement('span');
-        a.forEach(a => {
-          c.dataset[a] = a !== 'whitespace' ? b : '';
-        });
-        c.textContent = b;
-        return c;
-      };
-      [...a.childNodes].forEach(f => {
-        if (f.nodeType === 3) {
-          const c = a.closest('[lang]');
-          [...new Intl.Segmenter(c ? c.lang : 'en').segment(f.textContent.replace(/[\r\n\t]/g, '').replace(/\s{2,}/g, ' '))].forEach(a => {
-            const c = a.segment.trim();
-            const f = g([b, !c && 'whitespace'].filter(Boolean), c || ' ');
-            d.push(f);
-            e.push(f);
-          });
-          return;
-        }
-        if (b === 'word' && f.tagName && f.hasAttribute('data-nobr')) {
-          f.dataset.word = f.textContent;
-          d.push(f);
-          e.push(f);
-          return;
-        }
-        d.push(f);
-        if (f.hasChildNodes()) {
-          [].push.apply(e, c(f, b));
-        }
-      });
-      d.forEach(a => {
-        f.appendChild(a);
-      });
-      a.textContent = '';
-      a.appendChild(f);
-      return e;
-    }
     this._nobr();
-    const e = c(a, 'word');
+    const c = this._split('word');
     if (this.lineBreakingRules && !this.concatChar) {
-      this._lbr(e, 'word');
+      this._lbr(c, 'word');
     }
-    const f = c(a, 'char');
+    const d = this._split('char');
     if (this.lineBreakingRules && this.concatChar) {
-      this._lbr(f, 'char');
+      this._lbr(d, 'char');
     }
-    b.setProperty('--word-length', e.length);
-    e.forEach((a, i) => {
+    b.setProperty('--word-length', c.length);
+    c.forEach((a, i) => {
       a.style.setProperty('--word-index', i);
       if (!a.hasAttribute('data-whitespace')) {
         const b = document.createElement('span');
@@ -71,18 +30,16 @@ export default class {
         a.appendChild(b);
       }
     });
-    b.setProperty('--char-length', f.length);
-    f.forEach((a, i) => {
+    b.setProperty('--char-length', d.length);
+    d.forEach((a, i) => {
       a.ariaHidden = 'true';
       a.style.setProperty('--char-index', i);
     });
     a.querySelectorAll(':is([data-word], [data-char]):not([data-whitespace])').forEach(a => {
       a.style.display = 'inline-block';
     });
-    a.querySelectorAll('[data-char][data-whitespace]').forEach(a => {
-      if (getComputedStyle(a).display !== 'inline') {
-        a.innerHTML = '&nbsp;';
-      }
+    [...a.querySelectorAll('[data-char][data-whitespace]')].filter(a => getComputedStyle(a).display !== 'inline').forEach(a => {
+      a.innerHTML = '&nbsp;';
     });
   }
   _nobr() {
@@ -113,6 +70,47 @@ export default class {
     };
     [...this.element.childNodes].forEach(a);
   }
+  _split(a, b = this.element) {
+    const c = [];
+    const d = [];
+    const e = document.createDocumentFragment();
+    const f = (a, b) => {
+      const c = document.createElement('span');
+      a.forEach(a => {
+        c.dataset[a] = a !== 'whitespace' ? b : '';
+      });
+      c.textContent = b;
+      return c;
+    };
+    [...b.childNodes].forEach(e => {
+      if (e.nodeType === 3) {
+        const g = b.closest('[lang]');
+        [...new Intl.Segmenter(g ? g.lang : 'en').segment(e.textContent.replace(/[\r\n\t]/g, '').replace(/\s{2,}/g, ' '))].forEach(b => {
+          const e = b.segment.trim();
+          const g = f([a, !e && 'whitespace'].filter(Boolean), e || ' ');
+          c.push(g);
+          d.push(g);
+        });
+        return;
+      }
+      if (a === 'word' && e.tagName && e.hasAttribute('data-nobr')) {
+        e.dataset.word = e.textContent;
+        c.push(e);
+        d.push(e);
+        return;
+      }
+      c.push(e);
+      if (e.hasChildNodes()) {
+        [].push.apply(d, this._split(a, e));
+      }
+    });
+    c.forEach(a => {
+      e.appendChild(a);
+    });
+    b.textContent = '';
+    b.appendChild(e);
+    return d;
+  }
   _lbr(a, b) {
     let c;
     const d = (c, d, i) => {
@@ -126,7 +124,7 @@ export default class {
     };
     for (let i = 0; i < a.length; i++) {
       const d = a[i];
-      if (c && LINE_BREAKING_RULES_PROHIBIT_START_CHARS.has(d.textContent)) {
+      if (c && LBR_PROHIBIT_START_CHARS.has(d.textContent)) {
         c.dataset[b] = c.textContent += d.textContent;
         d.remove();
         a.splice(i, 1);
@@ -137,8 +135,8 @@ export default class {
     }
     for (let i = 0; i < a.length; i++) {
       const c = a[i];
-      if (LINE_BREAKING_RULES_PROHIBIT_END_CHARS.has(c.textContent)) {
-        d(c, LINE_BREAKING_RULES_PROHIBIT_END_CHARS, i);
+      if (LBR_PROHIBIT_END_CHARS.has(c.textContent)) {
+        d(c, LBR_PROHIBIT_END_CHARS, i);
         const e = a[i + 1];
         if (e) {
           e.dataset[b] = e.textContent = c.textContent + e.textContent;
@@ -149,8 +147,8 @@ export default class {
     }
     for (let i = 0; i < a.length; i++) {
       const b = a[i];
-      if (LINE_BREAKING_RULES_PROHIBIT_SEPARATE_CHARS.has(b.textContent)) {
-        d(b, LINE_BREAKING_RULES_PROHIBIT_SEPARATE_CHARS, i);
+      if (LBR_INSEPARATABLE_CHARS.has(b.textContent)) {
+        d(b, LBR_INSEPARATABLE_CHARS, i);
       }
     }
     if (b === 'char') {
