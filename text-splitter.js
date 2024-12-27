@@ -3,24 +3,26 @@ const LBR_PROHIBIT_START_CHARS = new Set(['!', ')', ',', '-', '.', ':', ';', '?'
 const LBR_PROHIBIT_END_CHARS = new Set(['(', '[', '{', '‘', '“', '〈', '《', '「', '『', '【', '〔', '〖', '〘', '〝', '（', '［', '｛', '｟']);
 const LBR_INSEPARATABLE_CHARS = new Set(['―', '‥', '…']);
 
-export default class {
+class TextSplitter {
   constructor(element, options) {
-    this._element = element;
-    this._options = { ...{ concatChar: false, lineBreakingRules: true, wordSegmenter: false }, ...options };
-    this._concatChar = this._options.concatChar === true;
-    this._lineBreakingRules = this._options.lineBreakingRules !== false;
-    this._wordSegmenter = this._options.wordSegmenter === true;
-    this._originalHTML = this._element.innerHTML;
-    const a = this._element;
+    this.element = element;
+    this.defaults = {
+      concatChar: false,
+      lineBreakingRules: true,
+      wordSegmenter: false,
+      ...options
+    };
+    this.originalHTML = this.element.innerHTML;
+    const a = this.element;
     const b = a.style;
-    this._latin();
-    const c = this._split('word');
-    if (this._lineBreakingRules && !this._concatChar) {
-      this._lbr(c, 'word');
+    this.latin();
+    const c = this.split('word');
+    if (this.defaults.lineBreakingRules !== false && this.defaults.concatChar !== true) {
+      this.lbr(c, 'word');
     }
-    const d = this._split('char');
-    if (this._lineBreakingRules && this._concatChar) {
-      this._lbr(d, 'char');
+    const d = this.split('char');
+    if (this.defaults.lineBreakingRules !== false && this.defaults.concatChar !== true) {
+      this.lbr(d, 'char');
     }
     b.setProperty('--word-length', c.length);
     c.forEach((a, i) => {
@@ -44,7 +46,7 @@ export default class {
       a.innerHTML = '&nbsp;';
     });
   }
-  _latin() {
+  latin() {
     const a = b => {
       if (b.nodeType === 3) {
         const a = b.textContent;
@@ -70,9 +72,9 @@ export default class {
       }
       [...b.childNodes].forEach(a);
     };
-    [...this._element.childNodes].forEach(a);
+    [...this.element.childNodes].forEach(a);
   }
-  _split(a, b = this._element) {
+  split(a, b = this.element) {
     const c = [];
     const d = [];
     const e = document.createDocumentFragment();
@@ -87,7 +89,7 @@ export default class {
     [...b.childNodes].forEach(e => {
       if (e.nodeType === 3) {
         const g = b.closest('[lang]');
-        [...new Intl.Segmenter(g ? g.lang : 'en', a === 'word' && this._wordSegmenter ? { granularity: 'word' } : {}).segment(e.textContent.replace(/[\r\n\t]/g, '').replace(/\s{2,}/g, ' '))].forEach(b => {
+        [...new Intl.Segmenter(g ? g.lang : 'en', a === 'word' && this.defaults.wordSegmenter !== false ? { granularity: 'word' } : {}).segment(e.textContent.replace(/[\r\n\t]/g, '').replace(/\s{2,}/g, ' '))].forEach(b => {
           const e = b.segment.trim();
           const g = f([a, !e && 'whitespace'].filter(Boolean), e || ' ');
           c.push(g);
@@ -104,7 +106,7 @@ export default class {
       }
       c.push(e);
       if (e.hasChildNodes()) {
-        [].push.apply(d, this._split(a, e));
+        [].push.apply(d, this.split(a, e));
       }
     });
     c.forEach(a => {
@@ -114,7 +116,7 @@ export default class {
     b.appendChild(e);
     return d;
   }
-  _lbr(a, b) {
+  lbr(a, b) {
     let c;
     const d = (c, d, i) => {
       const j = i + 1;
@@ -155,16 +157,18 @@ export default class {
       }
     }
     if (b === 'char') {
-      this._element.querySelectorAll('[data-word]:not([data-whitespace])').forEach(a => {
+      this.element.querySelectorAll('[data-word]:not([data-whitespace])').forEach(a => {
         a.textContent ? (a.dataset.word = a.textContent) : a.remove();
       });
     }
   }
   revert() {
-    const a = this._element;
+    const a = this.element;
     const b = a.style;
     b.removeProperty('--word-length');
     b.removeProperty('--char-length');
-    a.innerHTML = this._originalHTML;
+    a.innerHTML = this.originalHTML;
   }
 }
+
+export default TextSplitter;
