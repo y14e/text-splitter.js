@@ -1,4 +1,4 @@
-const NOBR_REGEXP = /\b[\p{Script=Latin}\u0021-\u002C\u002E-\u003E\u0040\u005B-\u0060\u007B-\u007E]+[\b]*/gu;
+const NOBR_REGEXP = /[\p{Script=Latin}\u0021-\u002C\u002E-\u003E\u0040\u005B-\u0060\u007B-\u007E]+/gu;
 const LBR_PROHIBIT_START_CHARS = new Set(['!', ')', ',', '-', '.', ':', ';', '?', ']', '}', '‐', '’', '”', '‥', '…', '、', '。', '々', '〉', '》', '」', '』', '】', '〕', '〗', '〙', '〞', '〟', 'ぁ', 'ぃ', 'ぅ', 'ぇ', 'ぉ', 'っ', 'ゃ', 'ゅ', 'ょ', 'ゎ', 'ゕ', 'ゖ', '゚', 'ゝ', 'ゞ', '゠', 'ァ', 'ィ', 'ゥ', 'ェ', 'ォ', 'ッ', 'ャ', 'ュ', 'ョ', 'ヮ', 'ヵ', 'ヶ', '・', 'ー', 'ヽ', 'ヾ', 'ㇰ', 'ㇱ', 'ㇲ', 'ㇳ', 'ㇴ', 'ㇵ', 'ㇶ', 'ㇷ', 'ㇸ', 'ㇹ', 'ㇺ', 'ㇻ', 'ㇼ', 'ㇽ', 'ㇾ', 'ㇿ', '！', '）', '，', '．', '：', '；', '？', '］', '｝', '｠']);
 const LBR_PROHIBIT_END_CHARS = new Set(['(', '[', '{', '‘', '“', '〈', '《', '「', '『', '【', '〔', '〖', '〘', '〝', '（', '［', '｛', '｟']);
 const LBR_INSEPARATABLE_CHARS = new Set(['―', '‥', '…']);
@@ -120,7 +120,7 @@ class TextSplitter {
     let c;
     const d = (c, d, i) => {
       const j = i + 1;
-      while (a[j] && d.has(a[j].textContent)) {
+      while (a[j] && d.has([...a[j].textContent].pop())) {
         const d = a[j];
         c.dataset[b] = c.textContent += d.textContent;
         d.remove();
@@ -129,7 +129,7 @@ class TextSplitter {
     };
     for (let i = 0; i < a.length; i++) {
       const d = a[i];
-      if (c && LBR_PROHIBIT_START_CHARS.has(d.textContent)) {
+      if (c && LBR_PROHIBIT_START_CHARS.has([...d.textContent].shift())) {
         c.dataset[b] = c.textContent += d.textContent;
         d.remove();
         a.splice(i, 1);
