@@ -17,11 +17,11 @@ class TextSplitter {
     const b = a.style;
     this.latin();
     const c = this.split('word');
-    if (this.defaults.lineBreakingRules !== false && this.defaults.concatChar !== true) {
+    if (this.defaults.lineBreakingRules && !this.defaults.concatChar) {
       this.lbr(c, 'word');
     }
     const d = this.split('char');
-    if (this.defaults.lineBreakingRules !== false && this.defaults.concatChar !== true) {
+    if (this.defaults.lineBreakingRules && this.defaults.concatChar) {
       this.lbr(d, 'char');
     }
     b.setProperty('--word-length', c.length);
@@ -89,7 +89,7 @@ class TextSplitter {
     [...b.childNodes].forEach(e => {
       if (e.nodeType === 3) {
         const g = b.closest('[lang]');
-        [...new Intl.Segmenter(g ? g.lang : 'en', a === 'word' && this.defaults.wordSegmenter !== false ? { granularity: 'word' } : {}).segment(e.textContent.replace(/[\r\n\t]/g, '').replace(/\s{2,}/g, ' '))].forEach(b => {
+        [...new Intl.Segmenter(g ? g.lang : 'en', a === 'word' && this.defaults.wordSegmenter ? { granularity: 'word' } : {}).segment(e.textContent.replace(/[\r\n\t]/g, '').replace(/\s{2,}/g, ' '))].forEach(b => {
           const e = b.segment.trim();
           const g = f([a, !e && 'whitespace'].filter(Boolean), e || ' ');
           c.push(g);
