@@ -117,35 +117,36 @@ class TextSplitter {
     return d;
   }
   lbr(a, b) {
-    let c;
-    const d = (c, d, i) => {
+    let c = new Intl.Segmenter();
+    let d;
+    const e = (f, g, i) => {
       const j = i + 1;
-      while (a[j] && d.has([...a[j].textContent].pop())) {
+      while (a[j] && g.has(a[j].textContent)) {
         const d = a[j];
-        c.dataset[b] = c.textContent += d.textContent;
+        f.dataset[b] = f.textContent += d.textContent;
         d.remove();
         a.splice(j, 1);
       }
     };
     for (let i = 0; i < a.length; i++) {
-      const d = a[i];
-      if (c && LBR_PROHIBIT_START_CHARS.has([...d.textContent].shift())) {
-        c.dataset[b] = c.textContent += d.textContent;
-        d.remove();
+      const e = a[i];
+      if (d && LBR_PROHIBIT_START_CHARS.has([...c.segment(e.textContent)].shift().segment)) {
+        d.dataset[b] = d.textContent += e.textContent;
+        e.remove();
         a.splice(i, 1);
         i--;
       } else {
-        c = d;
+        d = e;
       }
     }
     for (let i = 0; i < a.length; i++) {
-      const c = a[i];
-      if (LBR_PROHIBIT_END_CHARS.has(c.textContent)) {
-        d(c, LBR_PROHIBIT_END_CHARS, i);
-        const e = a[i + 1];
-        if (e) {
-          e.dataset[b] = e.textContent = c.textContent + e.textContent;
-          c.remove();
+      const d = a[i];
+      if (LBR_PROHIBIT_END_CHARS.has(d.textContent)) {
+        e(d, LBR_PROHIBIT_END_CHARS, i);
+        const f = a[i + 1];
+        if (f) {
+          f.dataset[b] = f.textContent = d.textContent + f.textContent;
+          d.remove();
           a.splice(i, 1);
         }
       }
@@ -153,7 +154,7 @@ class TextSplitter {
     for (let i = 0; i < a.length; i++) {
       const b = a[i];
       if (LBR_INSEPARATABLE_CHARS.has(b.textContent)) {
-        d(b, LBR_INSEPARATABLE_CHARS, i);
+        e(b, LBR_INSEPARATABLE_CHARS, i);
       }
     }
     if (b === 'char') {
