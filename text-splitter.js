@@ -1,7 +1,7 @@
 const NOBR_REGEXP = /[\p{sc=Latn}\u0021-\u002C\u002E-\u003E\u0040\u005B-\u0060\u007B-\u007E]+/gu;
-const LBR_PROHIBIT_START_CHARS = new Set(['!', ')', ',', '-', '.', ':', ';', '?', ']', '}', '‐', '’', '”', '‥', '…', '、', '。', '々', '〉', '》', '」', '』', '】', '〕', '〗', '〙', '〞', '〟', 'ぁ', 'ぃ', 'ぅ', 'ぇ', 'ぉ', 'っ', 'ゃ', 'ゅ', 'ょ', 'ゎ', 'ゕ', 'ゖ', '゚', 'ゝ', 'ゞ', '゠', 'ァ', 'ィ', 'ゥ', 'ェ', 'ォ', 'ッ', 'ャ', 'ュ', 'ョ', 'ヮ', 'ヵ', 'ヶ', '・', 'ー', 'ヽ', 'ヾ', 'ㇰ', 'ㇱ', 'ㇲ', 'ㇳ', 'ㇴ', 'ㇵ', 'ㇶ', 'ㇷ', 'ㇸ', 'ㇹ', 'ㇺ', 'ㇻ', 'ㇼ', 'ㇽ', 'ㇾ', 'ㇿ', '！', '）', '，', '．', '：', '；', '？', '］', '｝', '｠']);
-const LBR_PROHIBIT_END_CHARS = new Set(['(', '[', '{', '‘', '“', '〈', '《', '「', '『', '【', '〔', '〖', '〘', '〝', '（', '［', '｛', '｟']);
-const LBR_INSEPARATABLE_CHARS = new Set(['―', '‥', '…']);
+const LBR_PROHIBIT_START_REGEXP = /[\p{Pe}\p{Pf}\p{Po}\-‐゠々ぁぃぅぇぉっゃゅょゎゕゖ\u3099\u309Aゝゞァィゥェォッャュョヮヵヶーヽヾㇰㇱㇲㇳㇴㇵㇶㇷㇸㇹㇺㇻㇼㇽㇾㇿ]+/u;
+const LBR_PROHIBIT_END_REGEXP = /[\p{Pi}\p{Ps}]+/u;
+const LBR_INSEPARATABLE_REGEXP = /[―‥…]+/u;
 
 class TextSplitter {
   constructor(element, options) {
@@ -120,7 +120,7 @@ class TextSplitter {
     let d;
     const e = (f, g, i) => {
       const j = i + 1;
-      while (a[j] && g.has(a[j].textContent)) {
+      while (a[j] && g.test(a[j].textContent)) {
         const d = a[j];
         f.dataset[b] = f.textContent += d.textContent;
         d.remove();
@@ -129,7 +129,7 @@ class TextSplitter {
     };
     for (let i = 0; i < a.length; i++) {
       const e = a[i];
-      if (d && d.textContent.trim() && LBR_PROHIBIT_START_CHARS.has([...c.segment(e.textContent)].shift().segment)) {
+      if (d && d.textContent.trim() && LBR_PROHIBIT_START_REGEXP.test([...c.segment(e.textContent)].shift().segment)) {
         d.dataset[b] = d.textContent += e.textContent;
         e.remove();
         a.splice(i, 1);
@@ -140,10 +140,10 @@ class TextSplitter {
     }
     for (let i = 0; i < a.length; i++) {
       const d = a[i];
-      if (LBR_PROHIBIT_END_CHARS.has(d.textContent)) {
-        e(d, LBR_PROHIBIT_END_CHARS, i);
+      if (LBR_PROHIBIT_END_REGEXP.test(d.textContent)) {
+        e(d, LBR_PROHIBIT_END_REGEXP, i);
         const f = a[i + 1];
-        if (f) {
+        if (f && f.textContent.trim()) {
           f.dataset[b] = f.textContent = d.textContent + f.textContent;
           d.remove();
           a.splice(i, 1);
@@ -152,8 +152,8 @@ class TextSplitter {
     }
     for (let i = 0; i < a.length; i++) {
       const b = a[i];
-      if (LBR_INSEPARATABLE_CHARS.has(b.textContent)) {
-        e(b, LBR_INSEPARATABLE_CHARS, i);
+      if (LBR_INSEPARATABLE_REGEXP.test(b.textContent)) {
+        e(b, LBR_INSEPARATABLE_REGEXP, i);
       }
     }
     if (b === 'char') {
