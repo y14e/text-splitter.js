@@ -90,8 +90,7 @@ class TextSplitter {
       if (e.nodeType === 3) {
         const g = b.closest('[lang]');
         [...new Intl.Segmenter(g ? g.lang : 'en', a === 'word' && this.defaults.wordSegmenter ? { granularity: 'word' } : {}).segment(e.textContent.replace(/[\r\n\t]/g, '').replace(/\s{2,}/g, ' '))].forEach(b => {
-          const e = b.segment.trim();
-          const g = f([a, !e && 'whitespace'].filter(Boolean), e || ' ');
+          const g = f([a, (b.segment.charCodeAt(0) === 32) && 'whitespace'].filter(Boolean), b.segment || ' ');
           c.push(g);
           d.push(g);
         });
@@ -130,7 +129,7 @@ class TextSplitter {
     };
     for (let i = 0; i < a.length; i++) {
       const e = a[i];
-      if (d && LBR_PROHIBIT_START_CHARS.has([...c.segment(e.textContent)].shift().segment)) {
+      if (d && d.textContent.trim() && LBR_PROHIBIT_START_CHARS.has([...c.segment(e.textContent)].shift().segment)) {
         d.dataset[b] = d.textContent += e.textContent;
         e.remove();
         a.splice(i, 1);
