@@ -1,5 +1,5 @@
 const NOBR_REGEXP = /[\p{sc=Latn}\u0021-\u002C\u002E-\u003E\u0040\u005B-\u0060\u007B-\u007E]+/gu;
-const LBR_PROHIBIT_START_REGEXP = /[\p{Pd}\p{Pe}\p{Pf}\p{Po}々ぁぃぅぇぉっゃゅょゎゕゖ゛゜ゝゞァィゥェォッャュョヮヵヶーヽヾㇰㇱㇲㇳㇴㇵㇶㇷㇸㇹㇺㇻㇼㇽㇾㇿ]+/u;
+const LBR_PROHIBIT_START_REGEXP = /[\p{Pd}\p{Pe}\p{Pf}\p{Po}\u00A0々ぁぃぅぇぉっゃゅょゎゕゖ゛゜ゝゞァィゥェォッャュョヮヵヶーヽヾㇰㇱㇲㇳㇴㇵㇶㇷㇸㇹㇺㇻㇼㇽㇾㇿ]+/u;
 const LBR_PROHIBIT_START_EXCLUDE_REGEXP = /[―]+/u;
 const LBR_PROHIBIT_END_REGEXP = /[\p{Pi}\p{Ps}]+/u;
 const LBR_INSEPARATABLE_REGEXP = /[―‥…]+/u;
