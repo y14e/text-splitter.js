@@ -1,7 +1,7 @@
 const NOBR_REGEXP = /[\p{sc=Latn}\u0021-\u002C\u002E-\u003E\u0040\u005B-\u0060\u007B-\u007E]+/gu;
-const LBR_PROHIBIT_START_REGEXP = /([\b]?\p{Pi}|[\p{Pd}\p{Pf}\p{Po}\u00A0々ぁぃぅぇぉっゃゅょゎゕゖ゛゜ゝゞァィゥェォッャュョヮヵヶーヽヾㇰㇱㇲㇳㇴㇵㇶㇷㇸㇹㇺㇻㇼㇽㇾㇿ]|\u00A0*\p{Pe})/u;
+const LBR_PROHIBIT_START_REGEXP = /([\p{Pd}\p{Pe}\p{Pf}\p{Po}\u00A0々ぁぃぅぇぉっゃゅょゎゕゖ゛゜ゝゞァィゥェォッャュョヮヵヶーヽヾㇰㇱㇲㇳㇴㇵㇶㇷㇸㇹㇺㇻㇼㇽㇾㇿ]|[\b]?\p{Pi})/u;
 const LBR_PROHIBIT_START_EXCLUDE_REGEXP = /[―]+/u;
-const LBR_PROHIBIT_END_REGEXP = /(?:\p{Pi}|\p{Ps}\u00A0*)/u;
+const LBR_PROHIBIT_END_REGEXP = /[\p{Pi}\p{Ps}]/u;
 const LBR_INSEPARATABLE_REGEXP = /[―‥…]+/u;
 
 class TextSplitter {
