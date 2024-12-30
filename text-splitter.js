@@ -47,73 +47,92 @@ class TextSplitter {
     });
   }
   nobr() {
-    const a = b => {
-      if (b.nodeType === 3) {
-        const a = b.textContent;
-        if (NOBR_REGEXP.test(a)) {
-          const c = document.createDocumentFragment();
+    const a = this.element;
+    const b = document.createDocumentFragment();
+    const c = a => {
+      const b = a.nodeType;
+      if (b === 3) {
+        const b = a.textContent;
+        if (NOBR_REGEXP.test(b)) {
+          const a = document.createDocumentFragment();
           let i = 0;
-          a.replace(NOBR_REGEXP, (b, j) => {
-            if (j > i) {
-              c.appendChild(document.createTextNode(a.slice(i, j)));
-            }
+          b.replace(NOBR_REGEXP, (c, j) => {
             const d = document.createElement('span');
+            if (j > i) {
+              a.appendChild(document.createTextNode(b.slice(i, j)));
+            }
             d.dataset._nobr = '';
-            d.textContent = b;
-            c.appendChild(d);
-            i = j + b.length;
+            d.textContent = c;
+            a.appendChild(d);
+            i = j + c.length;
           });
-          if (i < a.length) {
-            c.appendChild(document.createTextNode(a.slice(i)));
+          if (i < b.length) {
+            a.appendChild(document.createTextNode(b.slice(i)));
           }
-          b.parentNode.replaceChild(c, b);
+          return a;
         }
-        return;
+        return a;
       }
-      [...b.childNodes].forEach(a);
+      const d = document.createDocumentFragment();
+      const e = a.cloneNode(false);
+      if (b === 1) {
+        [...a.childNodes].forEach(a => {
+          d.appendChild(c(a));
+        });
+        e.appendChild(d);
+      }
+      return e;
     };
-    [...this.element.childNodes].forEach(a);
+    [...a.childNodes].forEach(a => {
+      b.appendChild(c(a));
+    });
+    a.innerHTML = '';
+    a.appendChild(b);
   }
   split(a, b = this.element) {
     const c = [];
-    const d = [];
-    const e = document.createDocumentFragment();
-    const f = (a, b) => {
-      const c = document.createElement('span');
-      a.forEach(a => {
-        c.dataset[a] = a !== 'whitespace' ? b : '';
-      });
-      c.textContent = b;
-      return c;
-    };
-    [...b.childNodes].forEach(e => {
-      if (e.nodeType === 3) {
-        const g = b.closest('[lang]');
-        [...new Intl.Segmenter(g ? g.lang : 'en', a === 'word' && this.defaults.wordSegmenter ? { granularity: 'word' } : {}).segment(e.textContent.replace(/[\r\n\t]/g, '').replace(/\s{2,}/g, ' '))].forEach(b => {
-          const g = f([a, (b.segment.charCodeAt(0) === 32) && 'whitespace'].filter(Boolean), b.segment || ' ');
-          c.push(g);
-          d.push(g);
+    const d = (a, b) => {
+      const e = [];
+      const f = document.createDocumentFragment();
+      const g = (a, b) => {
+        const c = document.createElement('span');
+        a.forEach(a => {
+          c.dataset[a] = a !== 'whitespace' ? b : '';
         });
-        return;
-      }
-      if (a === 'word' && e.tagName && e.hasAttribute('data-_nobr')) {
-        delete e.dataset._nobr;
-        e.dataset.word = e.textContent;
-        c.push(e);
-        d.push(e);
-        return;
-      }
-      c.push(e);
-      if (e.hasChildNodes()) {
-        [].push.apply(d, this.split(a, e));
-      }
-    });
-    c.forEach(a => {
-      e.appendChild(a);
-    });
-    b.textContent = '';
-    b.appendChild(e);
-    return d;
+        c.textContent = b;
+        return c;
+      };
+      [...b.childNodes].forEach(f => {
+        const h = f.nodeType;
+        if (h === 3) {
+          const d = b.closest('[lang]');
+          [...new Intl.Segmenter(d ? d.lang : 'en', a === 'word' && this.defaults.wordSegmenter ? { granularity: 'word' } : {}).segment(f.textContent.replace(/[\r\n\t]/g, '').replace(/\s{2,}/g, ' '))].forEach(b => {
+            const d = g([a, b.segment.charCodeAt(0) === 32 && 'whitespace'].filter(Boolean), b.segment || ' ');
+            c.push(d);
+            e.push(d);
+          });
+          return;
+        }
+        if (a === 'word' && h === 1 && f.hasAttribute('data-_nobr')) {
+          delete f.dataset._nobr;
+          f.dataset.word = f.textContent;
+          c.push(f);
+          e.push(f);
+          return;
+        }
+        e.push(f);
+        if (f.hasChildNodes()) {
+          [].push.apply(c, d(a, f));
+        }
+      });
+      e.forEach(a => {
+        f.appendChild(a);
+      });
+      b.innerHTML = '';
+      b.appendChild(f);
+    };
+    d(a, b);
+    return c;
   }
   lbr(a, b) {
     let c = new Intl.Segmenter();
