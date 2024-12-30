@@ -1,6 +1,5 @@
 const NOBR_REGEXP = /[\p{sc=Latn}\u0021-\u002C\u002E-\u003E\u0040\u005B-\u0060\u007B-\u007E]+/gu;
-const LBR_PROHIBIT_START_REGEXP = /([\p{Pd}\p{Pe}\p{Pf}\p{Po}\u00A0々ぁぃぅぇぉっゃゅょゎゕゖ゛゜ゝゞァィゥェォッャュョヮヵヶーヽヾㇰㇱㇲㇳㇴㇵㇶㇷㇸㇹㇺㇻㇼㇽㇾㇿ]|\B\p{Pi})/u;
-const LBR_PROHIBIT_START_EXCLUDE_REGEXP = /[―]+/u;
+const LBR_PROHIBIT_START_REGEXP = /([[\p{Pd}--\q{―}]\p{Pe}\p{Pf}\p{Po}\u00A0々ぁぃぅぇぉっゃゅょゎゕゖ゛゜ゝゞァィゥェォッャュョヮヵヶーヽヾㇰㇱㇲㇳㇴㇵㇶㇷㇸㇹㇺㇻㇼㇽㇾㇿ]|\B\p{Pi})/v;
 const LBR_PROHIBIT_END_REGEXP = /([\p{Pi}\p{Ps}]|\p{Pf}\B)/u;
 const LBR_INSEPARATABLE_REGEXP = /[―‥…]+/u;
 
@@ -131,7 +130,7 @@ class TextSplitter {
     for (let i = 0; i < a.length; i++) {
       const e = a[i];
       const f = [...c.segment(e.textContent)].shift().segment;
-      if (d && d.textContent.trim() && LBR_PROHIBIT_START_REGEXP.test(f) && !LBR_PROHIBIT_START_EXCLUDE_REGEXP.test(f)) {
+      if (d && d.textContent.trim() && LBR_PROHIBIT_START_REGEXP.test(f)) {
         d.dataset[b] = d.textContent += e.textContent;
         e.remove();
         a.splice(i, 1);
