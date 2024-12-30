@@ -73,15 +73,15 @@ class TextSplitter {
         }
         return a;
       }
-      const d = document.createDocumentFragment();
-      const e = a.cloneNode(false);
+      const d = a.cloneNode(false);
       if (b === 1) {
+        const e = document.createDocumentFragment();
         [...a.childNodes].forEach(a => {
-          d.appendChild(c(a));
+          e.appendChild(c(a));
         });
-        e.appendChild(d);
+        d.appendChild(e);
       }
-      return e;
+      return d;
     };
     [...a.childNodes].forEach(a => {
       b.appendChild(c(a));
