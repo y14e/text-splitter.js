@@ -1,4 +1,4 @@
-const NOBR_REGEXP = /(?:[^\p{sc=Han}\p{sc=Hang}\p{sc=Hira}\p{sc=Kana}\p{C}\p{M}\p{Nl}\p{No}\p{P}\p{S}\p{Z}]+|[\u0021-\u002C\u002E-\u003E\u0040\u005B-\u0060\u007B-\u007E]+)/gu;
+const NOBR_REGEXP = /[^[\p{sc=Han}\p{sc=Hang}\p{sc=Hira}\p{sc=Kana}\p{So}\u0020\-?\u200D\uFE0F]+/gu;
 const LBR_PROHIBIT_START_REGEXP = /([[\p{Pd}--―]\p{Pe}\p{Pf}\p{Po}\u00A0々ぁぃぅぇぉっゃゅょゎゕゖ゛゜ゝゞァィゥェォッャュョヮヵヶーヽヾㇰㇱㇲㇳㇴㇵㇶㇷㇸㇹㇺㇻㇼㇽㇾㇿ]|^\p{Pi})/v;
 const LBR_PROHIBIT_END_REGEXP = /[\p{Pf}\p{Pi}\p{Ps}\p{Sc}]$/u;
 const LBR_INSEPARATABLE_REGEXP = /[―‥…]+/u;
@@ -16,6 +16,7 @@ class TextSplitter {
     const a = this.element;
     const b = a.style;
     this.nobr();
+    //*
     const c = this.split('word');
     if (this.defaults.lineBreakingRules && !this.defaults.concatChar) {
       this.lbr(c, 'word');
@@ -45,6 +46,7 @@ class TextSplitter {
     [...a.querySelectorAll('[data-char][data-whitespace]')].filter(a => getComputedStyle(a).display !== 'inline').forEach(a => {
       a.innerHTML = '&nbsp;';
     });
+    //*/
   }
   nobr() {
     const a = this.element;
