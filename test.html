@@ -31,24 +31,21 @@ body {
 </style>
 </head>
 <body>
-<p data-text-splitter="1">🐻L’eau d’une fontaine éclabousse doucement les pavés un enfant tente d’attraper l’éclat de l’arc-en-ciel qui s’y forme. Au loin, l’écho des cloches de Notre-Dame se mêle aux bruits lointains de «&nbsp;la circulation&nbsp;». Tout semble s’accorder dans un équilibre fragile entre l’agitation et l’immobilité. Sur une façade ancienne, l’inscription effacée «&nbsp;L’artisanat d’autrefois&nbsp;» rappelle le passé. Tandis que l’heure avance, l’énergie de la ville monte, et l’on sent que Paris, comme toujours, s’apprête à écrire une autre page de son histoire.🐻‍❄️</p>
+<p data-text-splitter="1">🐻L’eau d’une fontaine éclabousse doucement les pavés un enfant tente d’attraper l’éclat de l’arc-en-ciel qui s’y forme. Au loin, l’écho des cloches de Notre-Dame se mêle aux bruits lointains de «&nbsp;la circulation&nbsp;». Tout semble s’accorder dans un équilibre fragile entre l’agitation et l’immobilité.🐻‍❄️</p>
 <br><br><br><br><br>
-<p data-text-splitter="2">🐻Der „Forscher“ analysierte die Daten sehr gründlich, um (präzise Ergebnisse) zu erhalten. Seine Arbeit umfasste zahlreiche „Tabellen“ und Diagramme, die (alle Aspekte) des Projekts darstellten. Zusätzlich nutzte er verschiedene Methoden, wie die Analyse von „Rohdaten“ und das („Erstellen“) komplexer „Modelle“. Die Ergebnisse wurden anschließend in einem Bericht veröffentlicht, der (wissenschaftliche Standards) erfüllte und zur weiteren Forschung beitrug.🐻‍❄️</p>
+<p data-text-splitter="2">🐻Der „Forscher“ analysierte die Daten sehr gründlich, um (präzise Ergebnisse) zu erhalten. Seine Arbeit umfasste zahlreiche „Tabellen“ und Diagramme, die (alle Aspekte) des Projekts darstellten. Zusätzlich nutzte er verschiedene Methoden, wie die Analyse von „Rohdaten“ und das („Erstellen“) komplexer „Modelle“.🐻‍❄️</p>
 <br><br><br><br><br>
-<p data-text-splitter="3">🐻Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. “Excepteur sint” occaecat “cupidatat” non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.🐻‍❄️</p>
+<p data-text-splitter="3">🐻Это было нелегко, но я всегда помнил: «Каждое усилие приближает тебя к цели». С этим настроем я сел за стол и, шаг за шагом, завершил всё, что планировал. В итоге я был доволен результатом и подумал: «Трудности всегда стоят того, чтобы их преодолеть».🐻‍❄️</p>
 <br><br><br><br><br>
 <p data-text-splitter="4">🐻波瀾も曲折<!-- comment -->もない<b style="color: #66c;">単調な生活</b>を続けて来た時、私は<b style="color: #c69;">少なからず</b>、驚きました……。鄭寧に――重ねて、<b style="color: #f96;">そりゃご心配</b>ですね（笑々）と3.14159いったまま、<a href="#">腕組みをしてくれ</a>といいました。えゝ来ました。日本人、Lorem ipsum dolor sit amet、ことに「『日本』の若い女」は、そんな【利害の念】に頭を悩ます余地がなかった。そうすると過去が指し示す路を今まで通り積み重ねて行かせようとした昼の中に異様な調子をもって生れた性格の相違から出て来いという意味も籠っているのは詰らん<!-- comment -->人間に限るといった。🐻‍❄️</p>
 <script type="module">
 import TextSplitter from './text-splitter.js';
 let ts1, ts2, ts3, ts4;
 window.addEventListener('DOMContentLoaded', () => {
-  const start = performance.now();
   ts1 = new TextSplitter(document.querySelector('[data-text-splitter="1"]'));
   ts2 = new TextSplitter(document.querySelector('[data-text-splitter="2"]'));
   ts3 = new TextSplitter(document.querySelector('[data-text-splitter="3"]'));
   ts4 = new TextSplitter(document.querySelector('[data-text-splitter="4"]'), { wordSegmenter: true });
-  const end = performance.now();
-  console.log(`TextSplitter: ${end - start}ms`);
 });
 document.addEventListener('dblclick', () => {
   ts1.revert();
