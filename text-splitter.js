@@ -1,4 +1,4 @@
-const NOBR_REGEXP = /[\P{sc=Han}&&\P{sc=Hang}&&\P{sc=Hira}&&\P{sc=Kana}&&\P{sc=Zyyy}&&[\p{L}\u0021-\u002C\u002E-\u003E\u0040\u005B-\u0060\u007B-\u007E\u00A0]]+/gv;
+const NOBR_REGEXP = /[[\P{sc=Han}]&&[\P{sc=Hang}]&&[\P{sc=Hira}]&&[\P{sc=Kana}]&&[\P{sc=Zyyy}]&&[\p{L}\u0021-\u002C\u002E-\u003E\u0040\u005B-\u0060\u007B-\u007E\u00A0]]+/gv;
 const LBR_PROHIBIT_START_REGEXP = /^[[\p{Pd}--―]\p{Pe}\p{Pf}\p{Po}\u00A0々ぁぃぅぇぉっゃゅょゎゕゖ゛゜ゝゞァィゥェォッャュョヮヵヶーヽヾㇰㇱㇲㇳㇴㇵㇶㇷㇸㇹㇺㇻㇼㇽㇾㇿ]|\p{Pi}/v;
 const LBR_PROHIBIT_END_REGEXP = /[\p{Pf}\p{Pi}\p{Ps}\p{Sc}]$/u;
 const LBR_INSEPARATABLE_REGEXP = /[―‥…]/u;
