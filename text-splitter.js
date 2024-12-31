@@ -63,7 +63,7 @@ class TextSplitter {
           if (j > i) {
             c.appendChild(document.createTextNode(b.slice(i, j)));
           }
-          d.dataset.nonCjk = '';
+          d.dataset._nobr = '';
           d.textContent = a;
           c.appendChild(d);
           i = j + a.length;
@@ -86,8 +86,7 @@ class TextSplitter {
     [...a.childNodes].forEach(a => {
       b.appendChild(c(a));
     });
-    a.innerHTML = '';
-    a.appendChild(b);
+    a.replaceChildren(b);
   }
   split(a, b = this.element) {
     const c = [];
@@ -128,8 +127,7 @@ class TextSplitter {
       e.forEach(a => {
         f.appendChild(a);
       });
-      b.innerHTML = '';
-      b.appendChild(f);
+      b.replaceChildren(f);
     };
     d(a, b);
     return c;
