@@ -53,25 +53,25 @@ class TextSplitter {
       const b = a.nodeType;
       if (b === 3) {
         const b = a.textContent;
-        if (NOBR_REGEXP.test(b)) {
-          const a = document.createDocumentFragment();
-          let i = 0;
-          b.replace(NOBR_REGEXP, (c, j) => {
-            const d = document.createElement('span');
-            if (j > i) {
-              a.appendChild(document.createTextNode(b.slice(i, j)));
-            }
-            d.dataset._nobr = '';
-            d.textContent = c;
-            a.appendChild(d);
-            i = j + c.length;
-          });
-          if (i < b.length) {
-            a.appendChild(document.createTextNode(b.slice(i)));
-          }
+        if (!NOBR_REGEXP.test(b)) {
           return a;
         }
-        return a;
+        const c = document.createDocumentFragment();
+        let i = 0;
+        b.replace(NOBR_REGEXP, (a, j) => {
+          const d = document.createElement('span');
+          if (j > i) {
+            c.appendChild(document.createTextNode(b.slice(i, j)));
+          }
+          d.dataset.nonCjk = '';
+          d.textContent = a;
+          c.appendChild(d);
+          i = j + a.length;
+        });
+        if (i < b.length) {
+          c.appendChild(document.createTextNode(b.slice(i)));
+        }
+        return c;
       }
       const d = a.cloneNode(false);
       if (b === 1) {
