@@ -10,7 +10,7 @@ class TextSplitter {
       concatChar: false,
       lineBreakingRules: true,
       wordSegmenter: false,
-      ...options
+      ...options,
     };
     this.originalHTML = this.element.innerHTML;
     const a = this.element;
@@ -42,9 +42,11 @@ class TextSplitter {
     a.querySelectorAll(':is([data-word], [data-char]):not([data-whitespace])').forEach(a => {
       a.style.display = 'inline-block';
     });
-    [...a.querySelectorAll('[data-char][data-whitespace]')].filter(a => getComputedStyle(a).display !== 'inline').forEach(a => {
-      a.innerHTML = '&nbsp;';
-    });
+    [...a.querySelectorAll('[data-char][data-whitespace]')]
+      .filter(a => getComputedStyle(a).display !== 'inline')
+      .forEach(a => {
+        a.innerHTML = '&nbsp;';
+      });
   }
   nobr() {
     const a = this.element;
