@@ -173,8 +173,9 @@ class TextSplitter {
     }
   }
   revert() {
-    this.element.style.removeProperty('--word-length');
-    this.element.style.removeProperty('--char-length');
+    ['--word-length', '--char-length'].forEach(property => {
+      this.element.style.removeProperty(property);
+    });
     this.element.innerHTML = this.originalHTML;
   }
 }
