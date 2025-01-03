@@ -60,17 +60,16 @@ class TextSplitter {
         }
         const fragment = document.createDocumentFragment();
         let index = 0;
-        for (const match of text.matchAll(new RegExp(NOBR_REGEXP, 'gv'))) {
-          const offset = match.index;
+        text.replace(NOBR_REGEXP, (match, offset) => {
           if (offset > index) {
             fragment.appendChild(document.createTextNode(text.slice(index, offset)));
           }
-          index = offset + match[0].length;
+          index = offset + match.length;
           const element = document.createElement('span');
           element.dataset._nobr = '';
-          element.textContent = match[0];
+          element.textContent = match;
           fragment.appendChild(element);
-        }
+        });
         if (index < text.length) {
           fragment.appendChild(document.createTextNode(text.slice(index)));
         }
