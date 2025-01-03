@@ -1,4 +1,4 @@
-const NOBR_REGEXP = /[[\P{sc=Han}]&&[\P{sc=Hang}]&&[\P{sc=Hira}]&&[\P{sc=Kana}]&&[\P{sc=Zyyy}]&&[\p{L}\u0021-\u002C\u002E-\u003E\u0040\u005B-\u0060\u007B-\u007E\u00A0]]+/gv;
+const NOBR_REGEXP = /[[[\P{sc=Han}]&&[\P{sc=Hang}]&&[\P{sc=Hira}]&&[\P{sc=Kana}]&&[\P{sc=Zyyy}]&&[\p{L}]]\u0021-\u002C\u002E-\u003E\u0040\u005B-\u0060\u007B-\u007E\u00A0]+/gv;
 const LBR_PROHIBIT_START_REGEXP = /^[[\p{Pd}--―]\p{Pe}\p{Pf}\p{Po}\u00A0々ぁぃぅぇぉっゃゅょゎゕゖ゛゜ゝゞァィゥェォッャュョヮヵヶーヽヾㇰㇱㇲㇳㇴㇵㇶㇷㇸㇹㇺㇻㇼㇽㇾㇿ]|\p{Pi}/v;
 const LBR_PROHIBIT_END_REGEXP = /[\p{Pf}\p{Pi}\p{Ps}\p{Sc}\u00A0]$/u;
 const LBR_INSEPARATABLE_REGEXP = /[―‥…]/u;
@@ -6,188 +6,176 @@ const LBR_INSEPARATABLE_REGEXP = /[―‥…]/u;
 class TextSplitter {
   constructor(element, options) {
     this.element = element;
-    this.defaults = {
+    this.options = {
       concatChar: false,
       lineBreakingRules: true,
       wordSegmenter: false,
       ...options,
     };
+    this.words = [];
+    this.chars = [];
     this.originalHTML = this.element.innerHTML;
-    const a = this.element;
-    const b = a.style;
+    this.initialize();
+  }
+  initialize() {
     this.nobr();
-    const c = this.split('word');
-    if (this.defaults.lineBreakingRules && !this.defaults.concatChar) {
-      this.lbr(c, 'word');
+    this.words = this.split('word');
+    if (this.options.lineBreakingRules && !this.options.concatChar) {
+      this.lbr(this.words, 'word');
     }
-    const d = this.split('char');
-    if (this.defaults.lineBreakingRules && this.defaults.concatChar) {
-      this.lbr(d, 'char');
+    this.chars = this.split('char');
+    if (this.options.lineBreakingRules && this.options.concatChar) {
+      this.lbr(this.chars, 'char');
     }
-    b.setProperty('--word-length', c.length);
-    c.forEach((a, i) => {
-      a.style.setProperty('--word-index', i);
-      if (!a.hasAttribute('data-whitespace')) {
-        const b = document.createElement('span');
-        b.style.cssText = 'border:0;clip:rect(0,0,0,0);height:1px;margin:-1px;overflow:hidden;padding:0;position:absolute;user-select:none;white-space:nowrap;width:1px;';
-        b.textContent = a.textContent;
-        a.appendChild(b);
+    this.element.style.setProperty('--word-length', this.words.length);
+    this.words.forEach((word, index) => {
+      word.style.setProperty('--word-index', index);
+      if (!word.hasAttribute('data-whitespace')) {
+        const alternative = document.createElement('span');
+        alternative.style.cssText = 'border:0;clip:rect(0,0,0,0);height:1px;margin:-1px;overflow:hidden;padding:0;position:absolute;user-select:none;white-space:nowrap;width:1px;';
+        alternative.textContent = word.textContent;
+        word.appendChild(alternative);
       }
     });
-    b.setProperty('--char-length', d.length);
-    d.forEach((a, i) => {
-      a.ariaHidden = 'true';
-      a.style.setProperty('--char-index', i);
+    this.element.style.setProperty('--char-length', this.chars.length);
+    this.chars.forEach((char, index) => {
+      char.ariaHidden = 'true';
+      char.style.setProperty('--char-index', index);
     });
-    a.querySelectorAll(':is([data-word], [data-char]):not([data-whitespace])').forEach(a => {
-      a.style.display = 'inline-block';
+    this.element.querySelectorAll(':is([data-word], [data-char]):not([data-whitespace])').forEach(element => {
+      element.style.display = 'inline-block';
     });
-    [...a.querySelectorAll('[data-char][data-whitespace]')]
-      .filter(a => getComputedStyle(a).display !== 'inline')
-      .forEach(a => {
-        a.innerHTML = '&nbsp;';
-      });
+    [...this.element.querySelectorAll('[data-char][data-whitespace]')].forEach(element => {
+      if (getComputedStyle(element).display !== 'inline') {
+        element.innerHTML = '&nbsp;';
+      }
+    });
   }
   nobr() {
-    const a = this.element;
-    const b = document.createDocumentFragment();
-    const c = a => {
-      const b = a.nodeType;
-      if (b === 3) {
-        const b = a.textContent;
-        if (!NOBR_REGEXP.test(b)) {
-          return a;
+    const _nobr = node => {
+      if (node.nodeType === 3) {
+        const text = node.textContent;
+        if (!NOBR_REGEXP.test(text)) {
+          return node;
         }
-        const c = document.createDocumentFragment();
-        let i = 0;
-        b.replace(NOBR_REGEXP, (a, j) => {
-          const d = document.createElement('span');
-          if (j > i) {
-            c.appendChild(document.createTextNode(b.slice(i, j)));
+        const fragment = document.createDocumentFragment();
+        let index = 0;
+        text.replace(NOBR_REGEXP, (match, offset) => {
+          if (offset > index) {
+            fragment.appendChild(document.createTextNode(text.slice(index, offset)));
           }
-          d.dataset._nobr = '';
-          d.textContent = a;
-          c.appendChild(d);
-          i = j + a.length;
+          index = offset + match.length;
+          const element = document.createElement('span');
+          element.dataset._nobr = '';
+          element.textContent = match;
+          fragment.appendChild(element);
         });
-        if (i < b.length) {
-          c.appendChild(document.createTextNode(b.slice(i)));
+        if (index < text.length) {
+          fragment.appendChild(document.createTextNode(text.slice(index)));
         }
-        return c;
+        return fragment;
       }
-      const d = a.cloneNode(false);
-      if (b === 1) {
-        const e = document.createDocumentFragment();
-        [...a.childNodes].forEach(a => {
-          e.appendChild(c(a));
+      const clone = node.cloneNode(false);
+      if (node.nodeType === 1) {
+        [...node.childNodes].forEach(node => {
+          clone.appendChild(_nobr(node));
         });
-        d.appendChild(e);
       }
-      return d;
+      return clone;
     };
-    [...a.childNodes].forEach(a => {
-      b.appendChild(c(a));
+    const fragment = document.createDocumentFragment();
+    [...this.element.childNodes].forEach(node => {
+      fragment.appendChild(_nobr(node));
     });
-    a.replaceChildren(b);
+    this.element.replaceChildren(fragment);
   }
-  split(a, b = this.element) {
-    const c = [];
-    const d = (a, b) => {
-      const e = [];
-      const f = document.createDocumentFragment();
-      const g = (a, b) => {
-        const c = document.createElement('span');
-        a.forEach(a => {
-          c.dataset[a] = a !== 'whitespace' ? b : '';
-        });
-        c.textContent = b;
-        return c;
-      };
-      [...b.childNodes].forEach(f => {
-        const h = f.nodeType;
-        if (h === 3) {
-          const d = b.closest('[lang]');
-          [...new Intl.Segmenter(d ? d.lang : 'en', a === 'word' && this.defaults.wordSegmenter ? { granularity: 'word' } : {}).segment(f.textContent.replace(/[\r\n\t]/g, '').replace(/\s{2,}/g, ' '))].forEach(b => {
-            const d = g([a, b.segment.charCodeAt(0) === 32 && 'whitespace'].filter(Boolean), b.segment || ' ');
-            c.push(d);
-            e.push(d);
+  split(by) {
+    const list = [];
+    const _split = (by, node) => {
+      const fragment = document.createDocumentFragment();
+      [...node.childNodes].forEach(node => {
+        if (node.nodeType === 3) {
+          [...new Intl.Segmenter(document.documentElement.lang || 'en', by === 'word' && this.options.wordSegmenter ? { granularity: 'word' } : {}).segment(node.textContent.replace(/[\r\n\t]/g, '').replace(/\s{2,}/g, ' '))].forEach(segment => {
+            const element = document.createElement('span');
+            const text = segment.segment || ' ';
+            [by, segment.segment.charCodeAt(0) === 32 && 'whitespace'].filter(Boolean).forEach(type => {
+              element.dataset[type] = type !== 'whitespace' ? text : '';
+            });
+            element.textContent = text;
+            list.push(element);
+            fragment.appendChild(element);
           });
           return;
         }
-        if (a === 'word' && h === 1 && f.hasAttribute('data-_nobr')) {
-          delete f.dataset._nobr;
-          f.dataset.word = f.textContent;
-          c.push(f);
-          e.push(f);
+        if (by === 'word' && node.nodeType === 1 && node.hasAttribute('data-_nobr')) {
+          delete node.dataset._nobr;
+          node.dataset.word = node.textContent;
+          list.push(node);
+          fragment.appendChild(node);
           return;
         }
-        e.push(f);
-        if (f.hasChildNodes()) {
-          [].push.apply(c, d(a, f));
+        fragment.appendChild(node);
+        if (node.hasChildNodes()) {
+          _split(by, node);
         }
       });
-      e.forEach(a => {
-        f.appendChild(a);
-      });
-      b.replaceChildren(f);
+      node.replaceChildren(fragment);
     };
-    d(a, b);
-    return c;
+    _split(by, this.element);
+    return list;
   }
-  lbr(a, b) {
-    let c = new Intl.Segmenter();
-    let d;
-    const e = (f, g, i) => {
-      const j = i + 1;
-      while (a[j] && g.test(a[j].textContent)) {
-        const d = a[j];
-        f.dataset[b] = f.textContent += d.textContent;
-        d.remove();
-        a.splice(j, 1);
+  lbr(list, by) {
+    const _lbr = (item, pattern, index) => {
+      const offset = index + 1;
+      while (list[offset] && pattern.test(list[offset].textContent)) {
+        const next = list[offset];
+        item.dataset[by] = item.textContent += next.textContent;
+        next.remove();
+        list.splice(offset, 1);
       }
     };
-    for (let i = 0; i < a.length; i++) {
-      const e = a[i];
-      const f = [...c.segment(e.textContent)].shift().segment;
-      if (d && d.textContent.trim() && LBR_PROHIBIT_START_REGEXP.test(f)) {
-        d.dataset[b] = d.textContent += e.textContent;
-        e.remove();
-        a.splice(i, 1);
+    let last;
+    for (let i = 0; i < list.length; i++) {
+      const item = list[i];
+      if (last && last.textContent.trim() && LBR_PROHIBIT_START_REGEXP.test([...new Intl.Segmenter().segment(item.textContent)].shift().segment)) {
+        last.dataset[by] = last.textContent += item.textContent;
+        item.remove();
+        list.splice(i, 1);
         i--;
       } else {
-        d = e;
+        last = item;
       }
     }
-    for (let i = 0; i < a.length; i++) {
-      const d = a[i];
-      if (LBR_PROHIBIT_END_REGEXP.test(d.textContent)) {
-        e(d, LBR_PROHIBIT_END_REGEXP, i);
-        const f = a[i + 1];
-        if (f && f.textContent.trim()) {
-          f.dataset[b] = f.textContent = d.textContent + f.textContent;
-          d.remove();
-          a.splice(i, 1);
+    list.forEach((item, index) => {
+      if (LBR_PROHIBIT_END_REGEXP.test(item.textContent)) {
+        _lbr(item, LBR_PROHIBIT_END_REGEXP, index);
+        const next = list[index + 1];
+        if (next && next.textContent.trim()) {
+          next.dataset[by] = next.textContent = item.textContent + next.textContent;
+          item.remove();
+          list.splice(index, 1);
         }
       }
-    }
-    for (let i = 0; i < a.length; i++) {
-      const b = a[i];
-      if (LBR_INSEPARATABLE_REGEXP.test(b.textContent)) {
-        e(b, LBR_INSEPARATABLE_REGEXP, i);
+    });
+    list.forEach((item, index) => {
+      if (LBR_INSEPARATABLE_REGEXP.test(item.textContent)) {
+        _lbr(item, LBR_INSEPARATABLE_REGEXP, index);
       }
-    }
-    if (b === 'char') {
-      this.element.querySelectorAll('[data-word]:not([data-whitespace])').forEach(a => {
-        a.textContent ? (a.dataset.word = a.textContent) : a.remove();
+    });
+    if (by === 'char') {
+      this.element.querySelectorAll('[data-word]:not([data-whitespace])').forEach(element => {
+        if (element.textContent) {
+          element.dataset.word = element.textContent;
+        } else {
+          element.remove();
+        }
       });
     }
   }
   revert() {
-    const a = this.element;
-    const b = a.style;
-    b.removeProperty('--word-length');
-    b.removeProperty('--char-length');
-    a.innerHTML = this.originalHTML;
+    this.element.style.removeProperty('--word-length');
+    this.element.style.removeProperty('--char-length');
+    this.element.innerHTML = this.originalHTML;
   }
 }
 
