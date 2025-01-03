@@ -125,9 +125,9 @@ class TextSplitter {
     return list;
   }
   lbr(list, by) {
-    const _lbr = (item, pattern, index) => {
+    const _lbr = (item, regexp, index) => {
       const offset = index + 1;
-      while (list[offset] && pattern.test(list[offset].textContent)) {
+      while (list[offset] && regexp.test(list[offset].textContent)) {
         const next = list[offset];
         item.dataset[by] = item.textContent += next.textContent;
         next.remove();
