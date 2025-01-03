@@ -1,6 +1,6 @@
 const NOBR_REGEXP = /[[[\P{sc=Han}]&&[\P{sc=Hang}]&&[\P{sc=Hira}]&&[\P{sc=Kana}]&&[\P{sc=Zyyy}]&&[\p{L}]]\u0021-\u002C\u002E-\u003E\u0040\u005B-\u0060\u007B-\u007E\u00A0]+/gv;
-const LBR_PROHIBIT_START_REGEXP = /^[[\p{Pd}--―]\p{Pe}\p{Pf}\p{Po}\u00A0々ぁぃぅぇぉっゃゅょゎゕゖ゛゜ゝゞァィゥェォッャュョヮヵヶーヽヾㇰㇱㇲㇳㇴㇵㇶㇷㇸㇹㇺㇻㇼㇽㇾㇿ]|\p{Pi}/v;
-const LBR_PROHIBIT_END_REGEXP = /[\p{Pf}\p{Pi}\p{Ps}\p{Sc}\u00A0]$/u;
+const LBR_PROHIBIT_START_REGEXP = /^[[[\p{Pd}]--[―]]\p{Pe}\p{Pf}\p{Po}\u00A0々ぁぃぅぇぉっゃゅょゎゕゖ゛゜ゝゞァィゥェォッャュョヮヵヶーヽヾㇰㇱㇲㇳㇴㇵㇶㇷㇸㇹㇺㇻㇼㇽㇾㇿ]|\p{Pi}/v;
+const LBR_PROHIBIT_END_REGEXP = /[\p{Pf}\p{Pi}\p{Ps}\p{Sc}\u00A0]$/v;
 const LBR_INSEPARATABLE_REGEXP = /[―‥…]/u;
 
 class TextSplitter {
@@ -60,16 +60,17 @@ class TextSplitter {
         }
         const fragment = document.createDocumentFragment();
         let index = 0;
-        text.replace(NOBR_REGEXP, (match, offset) => {
+        for (const match of text.matchAll(new RegExp(NOBR_REGEXP, 'gv'))) {
+          const offset = match.index;
           if (offset > index) {
             fragment.appendChild(document.createTextNode(text.slice(index, offset)));
           }
-          index = offset + match.length;
+          index = offset + match[0].length;
           const element = document.createElement('span');
           element.dataset._nobr = '';
-          element.textContent = match;
+          element.textContent = match[0];
           fragment.appendChild(element);
-        });
+        }
         if (index < text.length) {
           fragment.appendChild(document.createTextNode(text.slice(index)));
         }
