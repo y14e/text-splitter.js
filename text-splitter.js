@@ -12,10 +12,10 @@ class TextSplitter {
       wordSegmenter: false,
       ...options,
     };
+    this.original = this.element.innerHTML;
     this.dom = this.element.cloneNode(true);
     this.words = [];
     this.chars = [];
-    this.originalHTML = this.element.innerHTML;
     this.initialize();
   }
   initialize() {
@@ -47,6 +47,11 @@ class TextSplitter {
     this.element.replaceChildren(...this.dom.childNodes);
     this.element.style.setProperty('--word-length', this.words.length);
     this.element.style.setProperty('--char-length', this.chars.length);
+    [...this.element.querySelectorAll(':scope > :not([data-word]) [data-whitespace]')].forEach(whitespace => {
+      if (getComputedStyle(whitespace).display !== 'inline') {
+        whitespace.innerHTML = '&nbsp;';
+      }
+    });
   }
   nobr(node = this.dom) {
     if (node.nodeType === 3) {
@@ -157,7 +162,7 @@ class TextSplitter {
   revert() {
     this.element.style.removeProperty('--word-length');
     this.element.style.removeProperty('--char-length');
-    this.element.innerHTML = this.originalHTML;
+    this.element.innerHTML = this.original;
   }
 }
 
