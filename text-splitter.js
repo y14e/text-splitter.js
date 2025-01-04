@@ -12,6 +12,7 @@ class TextSplitter {
       wordSegmenter: false,
       ...options,
     };
+    this.dom = this.element.cloneNode(true);
     this.words = [];
     this.chars = [];
     this.originalHTML = this.element.innerHTML;
@@ -27,7 +28,6 @@ class TextSplitter {
     if (this.options.lineBreakingRules && this.options.concatChar) {
       this.lbr(this.chars, 'char');
     }
-    this.element.style.setProperty('--word-length', this.words.length);
     this.words.forEach((word, index) => {
       word.style.setProperty('--word-index', index);
       if (!word.hasAttribute('data-whitespace')) {
@@ -37,65 +37,51 @@ class TextSplitter {
         word.appendChild(alternative);
       }
     });
-    this.element.style.setProperty('--char-length', this.chars.length);
     this.chars.forEach((char, index) => {
       char.ariaHidden = 'true';
       char.style.setProperty('--char-index', index);
     });
-    this.element.querySelectorAll(':is([data-word], [data-char]):not([data-whitespace])').forEach(element => {
+    this.dom.querySelectorAll(':is([data-word], [data-char]):not([data-whitespace])').forEach(element => {
       element.style.display = 'inline-block';
     });
-    [...this.element.querySelectorAll('[data-char][data-whitespace]')].forEach(element => {
-      if (getComputedStyle(element).display !== 'inline') {
-        element.innerHTML = '&nbsp;';
-      }
-    });
+    this.element.replaceChildren(...this.dom.childNodes);
+    this.element.style.setProperty('--word-length', this.words.length);
+    this.element.style.setProperty('--char-length', this.chars.length);
   }
-  nobr() {
-    const _nobr = node => {
-      if (node.nodeType === 3) {
-        const text = node.textContent;
-        if (!NOBR_REGEXP.test(text)) {
-          return node;
-        }
-        const fragment = document.createDocumentFragment();
-        let index = 0;
-        text.replace(NOBR_REGEXP, (match, offset) => {
-          if (offset > index) {
-            fragment.appendChild(document.createTextNode(text.slice(index, offset)));
-          }
-          index = offset + match.length;
-          const element = document.createElement('span');
-          element.dataset._nobr = '';
-          element.textContent = match;
-          fragment.appendChild(element);
-        });
-        if (index < text.length) {
-          fragment.appendChild(document.createTextNode(text.slice(index)));
-        }
-        return fragment;
+  nobr(node = this.dom) {
+    if (node.nodeType === 3) {
+      const text = node.textContent;
+      if (!NOBR_REGEXP.test(text)) {
+        return;
       }
-      const clone = node.cloneNode(false);
-      if (node.nodeType === 1) {
-        [...node.childNodes].forEach(node => {
-          clone.appendChild(_nobr(node));
-        });
+      let index = 0;
+      text.replace(NOBR_REGEXP, (match, offset) => {
+        if (offset > index) {
+          node.before(document.createTextNode(text.slice(index, offset)));
+        }
+        index = offset + match.length;
+        const element = document.createElement('span');
+        element.dataset._nobr = '';
+        element.textContent = match;
+        node.before(element);
+      });
+      if (index < text.length) {
+        node.before(document.createTextNode(text.slice(index)));
       }
-      return clone;
-    };
-    const fragment = document.createDocumentFragment();
-    [...this.element.childNodes].forEach(node => {
-      fragment.appendChild(_nobr(node));
-    });
-    this.element.replaceChildren(fragment);
+      node.remove();
+    } else if (node.nodeType === 1) {
+      [...node.childNodes].forEach(node => {
+        this.nobr(node);
+      });
+    }
   }
   split(by) {
     const list = [];
     const _split = (by, node) => {
-      const fragment = document.createDocumentFragment();
       [...node.childNodes].forEach(node => {
         if (node.nodeType === 3) {
-          [...new Intl.Segmenter(document.documentElement.lang || 'en', by === 'word' && this.options.wordSegmenter ? { granularity: 'word' } : {}).segment(node.textContent.replace(/[\r\n\t]/g, '').replace(/\s{2,}/g, ' '))].forEach(segment => {
+          const segments = [...new Intl.Segmenter(document.documentElement.lang || 'en', by === 'word' && this.options.wordSegmenter ? { granularity: 'word' } : {}).segment(node.textContent.replace(/[\r\n\t]/g, '').replace(/\s{2,}/g, ' '))];
+          segments.forEach(segment => {
             const element = document.createElement('span');
             const text = segment.segment || ' ';
             [by, segment.segment.charCodeAt(0) === 32 && 'whitespace'].filter(Boolean).forEach(type => {
@@ -103,25 +89,21 @@ class TextSplitter {
             });
             element.textContent = text;
             list.push(element);
-            fragment.appendChild(element);
+            node.before(element);
           });
-          return;
-        }
-        if (by === 'word' && node.nodeType === 1 && node.hasAttribute('data-_nobr')) {
+          node.remove();
+        } else if (by === 'word' && node.nodeType === 1 && node.hasAttribute('data-_nobr')) {
           delete node.dataset._nobr;
           node.dataset.word = node.textContent;
           list.push(node);
-          fragment.appendChild(node);
-          return;
-        }
-        fragment.appendChild(node);
-        if (node.hasChildNodes()) {
-          _split(by, node);
+        } else {
+          if (node.hasChildNodes()) {
+            _split(by, node);
+          }
         }
       });
-      node.replaceChildren(fragment);
     };
-    _split(by, this.element);
+    _split(by, this.dom);
     return list;
   }
   lbr(list, by) {
@@ -163,7 +145,7 @@ class TextSplitter {
       }
     });
     if (by === 'char') {
-      this.element.querySelectorAll('[data-word]:not([data-whitespace])').forEach(element => {
+      this.dom.querySelectorAll('[data-word]:not([data-whitespace])').forEach(element => {
         if (element.textContent) {
           element.dataset.word = element.textContent;
         } else {
@@ -173,9 +155,8 @@ class TextSplitter {
     }
   }
   revert() {
-    ['--word-length', '--char-length'].forEach(property => {
-      this.element.style.removeProperty(property);
-    });
+    this.element.style.removeProperty('--word-length');
+    this.element.style.removeProperty('--char-length');
     this.element.innerHTML = this.originalHTML;
   }
 }
