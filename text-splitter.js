@@ -57,7 +57,7 @@ class TextSplitter {
       let index = 0;
       text.replace(NOBR_REGEXP, (match, offset) => {
         if (offset > index) {
-          node.before(document.createTextNode(text.slice(index, offset)));
+          node.before(text.slice(index, offset));
         }
         index = offset + match.length;
         const element = document.createElement('span');
@@ -66,7 +66,7 @@ class TextSplitter {
         node.before(element);
       });
       if (index < text.length) {
-        node.before(document.createTextNode(text.slice(index)));
+        node.before(text.slice(index));
       }
       node.remove();
     } else if (node.nodeType === 1) {
