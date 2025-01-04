@@ -34,7 +34,7 @@ class TextSplitter {
         const alternative = document.createElement('span');
         alternative.style.cssText = 'border:0;clip:rect(0,0,0,0);height:1px;margin:-1px;overflow:hidden;padding:0;position:absolute;user-select:none;white-space:nowrap;width:1px;';
         alternative.textContent = word.textContent;
-        word.appendChild(alternative);
+        word.append(alternative);
       }
     });
     this.chars.forEach((char, index) => {
