@@ -13,13 +13,12 @@ class TextSplitter {
       ...options,
     };
     this.original = this.element.innerHTML;
-    this.dom = document.createDocumentFragment();
+    this.dom = this.element.cloneNode(true);
     this.words = [];
     this.chars = [];
     this.initialize();
   }
   initialize() {
-    this.dom.append(...this.element.cloneNode(true).childNodes);
     this.nobr();
     this.split('word');
     if (this.options.lineBreakingRules && !this.options.concatChar) {
@@ -45,7 +44,7 @@ class TextSplitter {
     this.dom.querySelectorAll(':is([data-word], [data-char]):not([data-whitespace])').forEach(element => {
       element.style.display = 'inline-block';
     });
-    this.element.replaceChildren(this.dom);
+    this.element.replaceChildren(...this.dom.childNodes);
     this.element.style.setProperty('--word-length', this.words.length);
     this.element.style.setProperty('--char-length', this.chars.length);
     [...this.element.querySelectorAll(':scope > :not([data-word]) [data-whitespace]')].forEach(whitespace => {
