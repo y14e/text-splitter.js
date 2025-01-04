@@ -19,7 +19,7 @@ class TextSplitter {
     this.initialize();
   }
   initialize() {
-    this.dom.append(...this.element.childNodes);
+    this.dom.append(...this.element.cloneNode(true).childNodes);
     this.nobr();
     this.split('word');
     if (this.options.lineBreakingRules && !this.options.concatChar) {
