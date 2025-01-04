@@ -32,10 +32,10 @@ class TextSplitter {
     this.words.forEach((word, index) => {
       word.style.setProperty('--word-index', index);
       if (!word.hasAttribute('data-whitespace')) {
-        const alternative = document.createElement('span');
-        alternative.style.cssText = 'border:0;clip:rect(0,0,0,0);height:1px;margin:-1px;overflow:hidden;padding:0;position:absolute;user-select:none;white-space:nowrap;width:1px;';
-        alternative.textContent = word.textContent;
-        word.append(alternative);
+        const alt = document.createElement('span');
+        alt.style.cssText = 'border:0;clip:rect(0,0,0,0);height:1px;margin:-1px;overflow:hidden;padding:0;position:absolute;user-select:none;white-space:nowrap;width:1px;';
+        alt.textContent = word.textContent;
+        word.append(alt);
       }
     });
     this.chars.forEach((char, index) => {
