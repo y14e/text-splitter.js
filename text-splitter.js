@@ -116,16 +116,16 @@ class TextSplitter {
         list.splice(offset, 1);
       }
     };
-    let last;
+    let previous;
     for (let i = 0; i < list.length; i++) {
       const item = list[i];
-      if (last && last.textContent.trim() && LBR_PROHIBIT_START_REGEXP.test([...new Intl.Segmenter().segment(item.textContent)].shift().segment)) {
-        last.dataset[by] = last.textContent += item.textContent;
+      if (previous && previous.textContent.trim() && LBR_PROHIBIT_START_REGEXP.test([...new Intl.Segmenter().segment(item.textContent)].shift().segment)) {
+        previous.dataset[by] = previous.textContent += item.textContent;
         item.remove();
         list.splice(i, 1);
         i--;
       } else {
-        last = item;
+        previous = item;
       }
     }
     list.forEach((item, index) => {
