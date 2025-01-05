@@ -1,4 +1,4 @@
-const NOBR_REGEXP = /[[[\P{sc=Han}]&&[\P{sc=Hang}]&&[\P{sc=Hira}]&&[\P{sc=Kana}]&&[\P{sc=Zyyy}]&&[\p{L}]]!-,.->@\[-`\{-~\u00A0]+/gv;
+const NOBR_REGEXP = /[[[\P{scx=Han}]&&[\P{scx=Hang}]&&[\P{scx=Hira}]&&[\P{scx=Kana}]&&[\p{L}]]!-,.->@\[-`\{-~\u00A0]+/gv;
 const LBR_PROHIBIT_START_REGEXP = /^[[[\p{Pd}]--[―]]\p{Pe}\p{Pf}\p{Po}\u00A0々〵〻ぁぃぅぇぉっゃゅょゎゕゖ゛-ゞァィゥェォッャュョヮヵヶー-ヾㇰ-ㇿ]|\p{Pi}/v;
 const LBR_PROHIBIT_END_REGEXP = /[\p{Pf}\p{Pi}\p{Ps}\p{Sc}\u00A0]$/v;
 const LBR_INSEPARATABLE_REGEXP = /[―]/v;
@@ -20,6 +20,7 @@ class TextSplitter {
   }
   initialize() {
     this.nobr();
+    /*
     this.split('word');
     if (this.options.lineBreakingRules && !this.options.concatChar) {
       this.lbr('word');
@@ -44,7 +45,9 @@ class TextSplitter {
     this.dom.querySelectorAll(':is([data-word], [data-char]):not([data-whitespace])').forEach(element => {
       element.style.cssText += 'display:inline-block;white-space:nowrap;';
     });
+    */
     this.element.replaceChildren(...this.dom.childNodes);
+    /*
     this.element.style.setProperty('--word-length', this.words.length);
     this.element.style.setProperty('--char-length', this.chars.length);
     [...this.element.querySelectorAll(':scope > :not([data-word]) [data-whitespace]')].forEach(whitespace => {
@@ -52,6 +55,7 @@ class TextSplitter {
         whitespace.innerHTML = '&nbsp;';
       }
     });
+    */
   }
   nobr(node = this.dom) {
     if (node.nodeType === 3) {
