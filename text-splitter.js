@@ -61,18 +61,18 @@ class TextSplitter {
         return;
       }
       let index = 0;
-      for (const m of matches) {
-        const offset = m.index;
+      matches.forEach(match => {
+        const offset = match.index;
         if (offset > index) {
           node.before(text.slice(index, offset));
         }
-        const match = m[0];
-        index = offset + match.length;
         const element = document.createElement('span');
         element.dataset._nobr_ = '';
-        element.textContent = match;
+        const text = match[0];
+        element.textContent = text;
         node.before(element);
-      }
+        index = offset + text.length;
+      });
       if (index < text.length) {
         node.before(text.slice(index));
       }
