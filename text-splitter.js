@@ -17,7 +17,6 @@ class TextSplitter {
     this.words = [];
     this.chars = [];
     this.initialize();
-    this.render();
   }
   initialize() {
     this.nobr();
@@ -45,8 +44,6 @@ class TextSplitter {
     this.dom.querySelectorAll(':is([data-word], [data-char]):not([data-whitespace])').forEach(element => {
       element.style.cssText += 'display:inline-block;white-space:nowrap;';
     });
-  }
-  render() {
     this.element.replaceChildren(...this.dom.childNodes);
     this.element.style.setProperty('--word-length', this.words.length);
     this.element.style.setProperty('--char-length', this.chars.length);
