@@ -68,10 +68,9 @@ class TextSplitter {
         }
         const element = document.createElement('span');
         element.dataset._nobr_ = '';
-        const text = match[0];
-        element.textContent = text;
+        element.textContent = match[0];
         node.before(element);
-        index = offset + text.length;
+        index = offset + match[0].length;
       });
       if (index < text.length) {
         node.before(text.slice(index));
