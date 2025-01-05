@@ -42,7 +42,7 @@ class TextSplitter {
       char.style.setProperty('--char-index', index);
     });
     this.dom.querySelectorAll(':is([data-word], [data-char]):not([data-whitespace])').forEach(element => {
-      element.style.display = 'inline-block';
+      element.style.cssText = 'display:inline-block;white-space:nowrap;';
     });
     this.element.replaceChildren(...this.dom.childNodes);
     this.element.style.setProperty('--word-length', this.words.length);
