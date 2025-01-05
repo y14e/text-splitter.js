@@ -56,20 +56,22 @@ class TextSplitter {
   nobr(node = this.dom) {
     if (node.nodeType === 3) {
       const text = node.textContent;
-      if (!NOBR_REGEXP.test(text)) {
+      const matches = [...text.matchAll(NOBR_REGEXP)];
+      if (matches.length === 0) {
         return;
       }
       let index = 0;
-      text.replace(NOBR_REGEXP, (match, offset) => {
+      for (const match of matches) {
+        const offset = match.index;
         if (offset > index) {
           node.before(text.slice(index, offset));
         }
-        index = offset + match.length;
+        index = offset + match[0].length;
         const element = document.createElement('span');
         element.dataset._nobr_ = '';
-        element.textContent = match;
+        element.textContent = match[0];
         node.before(element);
-      });
+      }
       if (index < text.length) {
         node.before(text.slice(index));
       }
