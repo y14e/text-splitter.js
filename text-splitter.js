@@ -20,7 +20,6 @@ class TextSplitter {
   }
   initialize() {
     this.nobr();
-    /*
     this.split('word');
     if (this.options.lineBreakingRules && !this.options.concatChar) {
       this.lbr('word');
@@ -45,9 +44,7 @@ class TextSplitter {
     this.dom.querySelectorAll(':is([data-word], [data-char]):not([data-whitespace])').forEach(element => {
       element.style.cssText += 'display:inline-block;white-space:nowrap;';
     });
-    */
     this.element.replaceChildren(...this.dom.childNodes);
-    /*
     this.element.style.setProperty('--word-length', this.words.length);
     this.element.style.setProperty('--char-length', this.chars.length);
     [...this.element.querySelectorAll(':scope > :not([data-word]) [data-whitespace]')].forEach(whitespace => {
@@ -55,7 +52,6 @@ class TextSplitter {
         whitespace.innerHTML = '&nbsp;';
       }
     });
-    */
   }
   nobr(node = this.dom) {
     if (node.nodeType === 3) {
