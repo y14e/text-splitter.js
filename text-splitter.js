@@ -28,8 +28,8 @@ class TextSplitter {
     if (this.options.lineBreakingRules && this.options.concatChar) {
       this.lbr('char');
     }
-    this.words.forEach((word, index) => {
-      word.style.setProperty('--word-index', index);
+    this.words.forEach((word, i) => {
+      word.style.setProperty('--word-index', i);
       if (!word.hasAttribute('data-whitespace')) {
         const alt = document.createElement('span');
         alt.style.cssText = 'border:0;clip:rect(0,0,0,0);height:1px;margin:-1px;overflow:hidden;padding:0;position:absolute;user-select:none;white-space:nowrap;width:1px;';
@@ -37,9 +37,9 @@ class TextSplitter {
         word.append(alt);
       }
     });
-    this.chars.forEach((char, index) => {
+    this.chars.forEach((char, i) => {
       char.ariaHidden = 'true';
-      char.style.setProperty('--char-index', index);
+      char.style.setProperty('--char-index', i);
     });
     this.dom.querySelectorAll(':is([data-word], [data-char]):not([data-whitespace])').forEach(element => {
       element.style.cssText += 'display:inline-block;white-space:nowrap;';
@@ -61,15 +61,16 @@ class TextSplitter {
         return;
       }
       let index = 0;
-      for (const match of matches) {
-        const offset = match.index;
+      for (const m of matches) {
+        const offset = m.index;
         if (offset > index) {
           node.before(text.slice(index, offset));
         }
-        index = offset + match[0].length;
+        const match = m[0];
+        index = offset + match.length;
         const element = document.createElement('span');
         element.dataset._nobr_ = '';
-        element.textContent = match[0];
+        element.textContent = match;
         node.before(element);
       }
       if (index < text.length) {
@@ -130,20 +131,20 @@ class TextSplitter {
         previous = item;
       }
     }
-    list.forEach((item, index) => {
+    list.forEach((item, i) => {
       if (LBR_PROHIBIT_END_REGEXP.test(item.textContent)) {
-        _(item, LBR_PROHIBIT_END_REGEXP, index);
-        const next = list[index + 1];
+        _(item, LBR_PROHIBIT_END_REGEXP, i);
+        const next = list[i + 1];
         if (next && next.textContent.trim()) {
           next.dataset[by] = next.textContent = item.textContent + next.textContent;
           item.remove();
-          list.splice(index, 1);
+          list.splice(i, 1);
         }
       }
     });
-    list.forEach((item, index) => {
+    list.forEach((item, i) => {
       if (LBR_INSEPARATABLE_REGEXP.test(item.textContent)) {
-        _(item, LBR_INSEPARATABLE_REGEXP, index);
+        _(item, LBR_INSEPARATABLE_REGEXP, i);
       }
     });
     if (by === 'char') {
