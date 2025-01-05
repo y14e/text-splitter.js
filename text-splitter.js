@@ -102,7 +102,7 @@ class TextSplitter {
         });
         node.remove();
       } else if (by === 'word' && node.nodeType === 1 && node.hasAttribute('data-_nobr_')) {
-//        delete node.dataset._nobr_;
+        delete node.dataset._nobr_;
         node.dataset.word = node.textContent;
         list.push(node);
       } else if (node.hasChildNodes()) {
