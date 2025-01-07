@@ -86,7 +86,7 @@ class TextSplitter {
     const list = this[`${by}s`];
     [...node.childNodes].forEach(node => {
       if (node.nodeType === 3) {
-        const segments = [...new Intl.Segmenter(document.documentElement.lang || 'en', by === 'word' && this.options.wordSegmenter ? { granularity: 'word' } : {}).segment(node.textContent.replace(/[\r\n\t]/g, '').replace(/\s{2,}/g, ' '))];
+        const segments = [...new Intl.Segmenter(node.parentNode.closest('[lang]')?.lang || document.documentElement.lang || 'en', by === 'word' && this.options.wordSegmenter ? { granularity: 'word' } : {}).segment(node.textContent.replace(/[\r\n\t]/g, '').replace(/\s{2,}/g, ' '))];
         segments.forEach(segment => {
           const element = document.createElement('span');
           const text = segment.segment || ' ';
@@ -121,7 +121,7 @@ class TextSplitter {
     let previous;
     for (let i = 0; i < list.length; i++) {
       const item = list[i];
-      if (previous && previous.textContent.trim() && LBR_PROHIBIT_START_REGEXP.test([...new Intl.Segmenter().segment(item.textContent)].shift().segment)) {
+      if (previous && previous.textContent.trim() && LBR_PROHIBIT_START_REGEXP.test([...new Intl.Segmenter(item.closest('[lang]')?.lang || document.documentElement.lang || 'en').segment(item.textContent)].shift().segment)) {
         previous.dataset[by] = previous.textContent += item.textContent;
         item.remove();
         list.splice(i, 1);
