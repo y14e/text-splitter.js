@@ -47,7 +47,7 @@ class TextSplitter {
     this.element.replaceChildren(...this.dom.childNodes);
     this.element.style.setProperty('--word-length', this.words.length);
     this.element.style.setProperty('--char-length', this.chars.length);
-    [...this.element.querySelectorAll(':scope > :not([data-word]) [data-whitespace]')].forEach(whitespace => {
+    [...this.element.querySelectorAll(':scope > :not([data-word]) [data-char][data-whitespace]')].forEach(whitespace => {
       if (getComputedStyle(whitespace).display !== 'inline') {
         whitespace.innerHTML = '&nbsp;';
       }
