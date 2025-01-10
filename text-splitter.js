@@ -56,7 +56,7 @@ class TextSplitter {
   nobr(node = this.dom) {
     if (node.nodeType === 3) {
       const text = node.textContent;
-      const matches = [...text.matchAll(NOBR_REGEXP)];
+      const matches = text.matchAll(NOBR_REGEXP);
       if (matches.length === 0) {
         return;
       }
