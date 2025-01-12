@@ -109,15 +109,6 @@ class TextSplitter {
   }
   lbr(by) {
     const list = this[`${by}s`];
-    const _ = (item, regexp, index) => {
-      const offset = index + 1;
-      while (list[offset] && regexp.test(list[offset].textContent)) {
-        const next = list[offset];
-        item.dataset[by] = item.textContent += next.textContent;
-        next.remove();
-        list.splice(offset, 1);
-      }
-    };
     let previous;
     for (let i = 0; i < list.length; i++) {
       const item = list[i];
@@ -130,6 +121,16 @@ class TextSplitter {
         previous = item;
       }
     }
+    const _ = (item, regexp, index) => {
+      const offset = index + 1;
+      let next = list[offset];
+      while (next && regexp.test(next.textContent)) {
+        item.dataset[by] = item.textContent += next.textContent;
+        next.remove();
+        list.splice(offset, 1);
+        next = list[offset];
+      }
+    };
     list.forEach((item, i) => {
       if (LBR_PROHIBIT_END_REGEXP.test(item.textContent)) {
         _(item, LBR_PROHIBIT_END_REGEXP, i);
