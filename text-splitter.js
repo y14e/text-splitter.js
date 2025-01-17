@@ -32,7 +32,18 @@ class TextSplitter {
       word.style.setProperty('--word-index', i);
       if (!word.hasAttribute('data-whitespace')) {
         const alt = document.createElement('span');
-        alt.style.cssText += 'border:0;clip:rect(0,0,0,0);height:1px;margin:-1px;overflow:hidden;padding:0;position:absolute;user-select:none;white-space:nowrap;width:1px;';
+        alt.style.cssText += `
+          border: 0;
+          clip: rect(0, 0, 0, 0);
+          height: 1px;
+          margin: -1px;
+          overflow: hidden;
+          padding: 0;
+          position: absolute;
+          user-select: none;
+          white-space: nowrap;
+          width: 1px;
+        `;
         alt.textContent = word.textContent;
         word.append(alt);
       }
@@ -42,7 +53,10 @@ class TextSplitter {
       char.style.setProperty('--char-index', i);
     });
     this.dom.querySelectorAll(':is([data-word], [data-char]):not([data-whitespace])').forEach(element => {
-      element.style.cssText += 'display:inline-block;white-space:nowrap;';
+      element.style.cssText += `
+        display: inline-block;
+        white-space: nowrap;
+      `;
     });
     this.element.replaceChildren(...this.dom.childNodes);
     this.element.style.setProperty('--word-length', this.words.length);
