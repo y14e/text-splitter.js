@@ -153,7 +153,7 @@ class TextSplitter {
         previous = item;
       }
     }
-    const _ = (item: HTMLElement, regexp: RegExp, index: number) => {
+    const _ = (item: HTMLElement, regexp: RegExp, index: number): void => {
       const offset = index + 1;
       let next = list[offset];
       while (next && regexp.test(next.textContent!)) {
