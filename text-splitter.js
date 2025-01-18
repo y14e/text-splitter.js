@@ -1,7 +1,7 @@
 const NOBR_REGEXP = /[[[\P{scx=Han}]&&[\P{scx=Hang}]&&[\P{scx=Hira}]&&[\P{scx=Kana}]&&[\p{L}]]!-,.->@\[-`\{-~\u00A0]+/gv;
 const LBR_PROHIBIT_START_REGEXP = /^[[[\p{Pd}]--[―]]\p{Pe}\p{Pf}\p{Po}\u00A0々〵〻ぁぃぅぇぉっゃゅょゎゕゖ゛-ゞァィゥェォッャュョヮヵヶー-ヾㇰ-ㇿ]|\p{Pi}/v;
-const LBR_PROHIBIT_END_REGEXP = /[\p{Pf}\p{Pi}\p{Ps}\p{Sc}\u00A0]$/v;
-const LBR_INSEPARATABLE_REGEXP = /[―]/v;
+const LBR_PROHIBIT_END_REGEXP = /[\p{Pf}\p{Pi}\p{Ps}\p{Sc}\u00A0]$/u;
+const LBR_INSEPARATABLE_REGEXP = /[―]/u;
 
 class TextSplitter {
   constructor(element, options) {
@@ -18,6 +18,7 @@ class TextSplitter {
     this.chars = [];
     this.initialize();
   }
+
   initialize() {
     this.nobr();
     this.split('word');
@@ -67,10 +68,11 @@ class TextSplitter {
       }
     });
   }
+
   nobr(node = this.dom) {
     if (node.nodeType === 3) {
       const text = node.textContent;
-      const matches = text.matchAll(NOBR_REGEXP);
+      const matches = [...text.matchAll(NOBR_REGEXP)];
       if (matches.length === 0) {
         return;
       }
@@ -97,6 +99,7 @@ class TextSplitter {
       });
     }
   }
+
   split(by, node = this.dom) {
     const list = this[`${by}s`];
     [...node.childNodes].forEach(node => {
@@ -122,6 +125,7 @@ class TextSplitter {
       }
     });
   }
+
   lbr(by) {
     const list = this[`${by}s`];
     let previous;
@@ -172,6 +176,7 @@ class TextSplitter {
       });
     }
   }
+
   revert() {
     this.element.style.removeProperty('--word-length');
     this.element.style.removeProperty('--char-length');
