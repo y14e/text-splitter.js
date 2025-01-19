@@ -128,7 +128,7 @@ class TextSplitter {
 
   lbr(by) {
     const list = this[`${by}s`];
-    let previous;
+    let previous = null;
     for (let i = 0; i < list.length; i++) {
       const item = list[i];
       if (previous && previous.textContent.trim() && LBR_PROHIBIT_START_REGEXP.test([...new Intl.Segmenter(item.closest('[lang]')?.lang || document.documentElement.lang || 'en').segment(item.textContent)].shift().segment)) {

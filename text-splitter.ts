@@ -32,7 +32,7 @@ class TextSplitter {
     this.initialize();
   }
 
-  private initialize(): void {
+  private initialize() {
     this.nobr();
     this.split('word');
     if (this.options.lineBreakingRules && !this.options.concatChar) {
@@ -82,7 +82,7 @@ class TextSplitter {
     });
   }
 
-  private nobr(node: HTMLElement = this.dom): void {
+  private nobr(node: HTMLElement = this.dom) {
     if (node.nodeType === 3) {
       const text = node.textContent!;
       const matches = [...text.matchAll(NOBR_REGEXP)];
@@ -113,7 +113,7 @@ class TextSplitter {
     }
   }
 
-  private split(by: 'word' | 'char', node: HTMLElement = this.dom): void {
+  private split(by: 'word' | 'char', node: HTMLElement = this.dom) {
     const list = this[`${by}s` as 'words' | 'chars'];
     [...node.childNodes].forEach(node => {
       if (node.nodeType === 3) {
@@ -139,9 +139,9 @@ class TextSplitter {
     });
   }
 
-  private lbr(by: 'word' | 'char'): void {
+  private lbr(by: 'word' | 'char') {
     const list = this[`${by}s` as 'words' | 'chars'];
-    let previous;
+    let previous = null;
     for (let i = 0; i < list.length; i++) {
       const item = list[i];
       if (previous && previous.textContent!.trim() && LBR_PROHIBIT_START_REGEXP.test([...new Intl.Segmenter((item.closest('[lang]') as HTMLElement)?.lang || document.documentElement.lang || 'en').segment(item.textContent!)].shift()!.segment)) {
@@ -153,7 +153,7 @@ class TextSplitter {
         previous = item;
       }
     }
-    const _ = (item: HTMLElement, regexp: RegExp, index: number): void => {
+    const _ = (item: HTMLElement, regexp: RegExp, index: number) => {
       const offset = index + 1;
       let next = list[offset];
       while (next && regexp.test(next.textContent!)) {
@@ -190,7 +190,7 @@ class TextSplitter {
     }
   }
 
-  revert(): void {
+  revert() {
     this.element.style.removeProperty('--word-length');
     this.element.style.removeProperty('--char-length');
     this.element.innerHTML = this.original;
