@@ -82,7 +82,7 @@ class TextSplitter {
     });
   }
 
-  private nobr(node: HTMLElement = this.dom) {
+  private nobr(node = this.dom) {
     if (node.nodeType === 3) {
       const text = node.textContent!;
       const matches = [...text.matchAll(NOBR_REGEXP)];
@@ -113,7 +113,7 @@ class TextSplitter {
     }
   }
 
-  private split(by: 'word' | 'char', node: HTMLElement = this.dom) {
+  private split(by: 'word' | 'char', node = this.dom) {
     const list = this[`${by}s` as 'words' | 'chars'];
     [...node.childNodes].forEach(node => {
       if (node.nodeType === 3) {
@@ -163,7 +163,7 @@ class TextSplitter {
         next = list[offset];
       }
     };
-    list.forEach((item: HTMLElement, i: number) => {
+    list.forEach((item, i) => {
       if (LBR_PROHIBIT_END_REGEXP.test(item.textContent!)) {
         _(item, LBR_PROHIBIT_END_REGEXP, i);
         const next = list[i + 1];
@@ -174,7 +174,7 @@ class TextSplitter {
         }
       }
     });
-    list.forEach((item: HTMLElement, i: number) => {
+    list.forEach((item, i) => {
       if (LBR_INSEPARATABLE_REGEXP.test(item.textContent!)) {
         _(item, LBR_INSEPARATABLE_REGEXP, i);
       }
