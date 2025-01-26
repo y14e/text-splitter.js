@@ -140,7 +140,7 @@ class TextSplitter {
         previous = item;
       }
     }
-    const _merge = (item, regexp, index) => {
+    const concatNext = (item, regexp, index) => {
       const offset = index + 1;
       let next = list[offset];
       while (next && regexp.test(next.textContent)) {
@@ -152,7 +152,7 @@ class TextSplitter {
     };
     list.forEach((item, i) => {
       if (LBR_PROHIBIT_END_REGEXP.test(item.textContent)) {
-        _merge(item, LBR_PROHIBIT_END_REGEXP, i);
+        concatNext(item, LBR_PROHIBIT_END_REGEXP, i);
         const next = list[i + 1];
         if (next && next.textContent.trim()) {
           next.dataset[by] = next.textContent = item.textContent + next.textContent;
@@ -163,7 +163,7 @@ class TextSplitter {
     });
     list.forEach((item, i) => {
       if (LBR_INSEPARATABLE_REGEXP.test(item.textContent)) {
-        _merge(item, LBR_INSEPARATABLE_REGEXP, i);
+        concatNext(item, LBR_INSEPARATABLE_REGEXP, i);
       }
     });
     if (by === 'char') {
