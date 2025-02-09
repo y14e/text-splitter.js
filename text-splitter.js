@@ -26,6 +26,7 @@ class TextSplitter {
     this.split('char');
     if (this.options.lineBreakingRules && this.options.concatChar) this.lbr('char');
     this.words.forEach((word, i) => {
+      word.translate = false;
       word.style.setProperty('--word-index', i);
       if (!word.hasAttribute('data-whitespace')) {
         const alt = document.createElement('span');

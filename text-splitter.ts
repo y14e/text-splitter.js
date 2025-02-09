@@ -39,6 +39,7 @@ class TextSplitter {
     this.split('char');
     if (this.options.lineBreakingRules && this.options.concatChar) this.lbr('char');
     this.words.forEach((word, i) => {
+      word.translate = false;
       word.style.setProperty('--word-index', String(i));
       if (!word.hasAttribute('data-whitespace')) {
         const alt = document.createElement('span');
@@ -159,9 +160,7 @@ class TextSplitter {
       }
     });
     list.forEach((item, i) => {
-      if (LBR_INSEPARATABLE_REGEXP.test(item.textContent!)) {
-        concatNext(item, LBR_INSEPARATABLE_REGEXP, i);
-      }
+      if (LBR_INSEPARATABLE_REGEXP.test(item.textContent!)) concatNext(item, LBR_INSEPARATABLE_REGEXP, i);
     });
     if (by === 'char') {
       this.dom.querySelectorAll('[data-word]:not([data-whitespace])').forEach(element => {
