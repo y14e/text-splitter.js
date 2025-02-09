@@ -35,13 +35,9 @@ class TextSplitter {
   private initialize() {
     this.nobr();
     this.split('word');
-    if (this.options.lineBreakingRules && !this.options.concatChar) {
-      this.lbr('word');
-    }
+    if (this.options.lineBreakingRules && !this.options.concatChar) this.lbr('word');
     this.split('char');
-    if (this.options.lineBreakingRules && this.options.concatChar) {
-      this.lbr('char');
-    }
+    if (this.options.lineBreakingRules && this.options.concatChar) this.lbr('char');
     this.words.forEach((word, i) => {
       word.style.setProperty('--word-index', String(i));
       if (!word.hasAttribute('data-whitespace')) {
@@ -76,9 +72,7 @@ class TextSplitter {
     this.element.style.setProperty('--word-length', String(this.words.length));
     this.element.style.setProperty('--char-length', String(this.chars.length));
     [...this.element.querySelectorAll(':scope > :not([data-word]) [data-char][data-whitespace]')].forEach(whitespace => {
-      if (getComputedStyle(whitespace).display !== 'inline') {
-        whitespace.innerHTML = '&nbsp;';
-      }
+      if (getComputedStyle(whitespace).display !== 'inline') whitespace.innerHTML = '&nbsp;';
     });
   }
 
@@ -86,15 +80,11 @@ class TextSplitter {
     if (node.nodeType === 3) {
       const text = node.textContent!;
       const matches = [...text.matchAll(NOBR_REGEXP)];
-      if (matches.length === 0) {
-        return;
-      }
+      if (matches.length === 0) return;
       let index = 0;
       matches.forEach(match => {
         const offset = match.index;
-        if (offset > index) {
-          node.before(text.slice(index, offset));
-        }
+        if (offset > index) node.before(text.slice(index, offset));
         const element = document.createElement('span');
         element.dataset._nobr_ = '';
         const matched = match[0];
@@ -102,14 +92,10 @@ class TextSplitter {
         node.before(element);
         index = offset + matched.length;
       });
-      if (index < text.length) {
-        node.before(text.slice(index));
-      }
+      if (index < text.length) node.before(text.slice(index));
       node.remove();
     } else if (node.hasChildNodes()) {
-      [...node.childNodes].forEach(node => {
-        this.nobr(node as HTMLElement);
-      });
+      [...node.childNodes].forEach(node => this.nobr(node as HTMLElement));
     }
   }
 
@@ -121,9 +107,7 @@ class TextSplitter {
         segments.forEach(segment => {
           const element = document.createElement('span');
           const text = segment.segment || ' ';
-          [by, segment.segment.charCodeAt(0) === 32 && 'whitespace'].filter(Boolean).forEach(type => {
-            element.dataset[type as string] = type !== 'whitespace' ? text : '';
-          });
+          [by, segment.segment.charCodeAt(0) === 32 && 'whitespace'].filter(Boolean).forEach(type => (element.dataset[type as string] = type !== 'whitespace' ? text : ''));
           element.textContent = text;
           list.push(element);
           node.before(element);
