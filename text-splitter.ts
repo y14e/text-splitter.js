@@ -87,7 +87,7 @@ class TextSplitter {
         const offset = match.index;
         if (offset > index) node.before(text.slice(index, offset));
         const element = document.createElement('span');
-        element.dataset._nobr_ = '';
+        element.setAttribute('data-_nobr_', '');
         const matched = match[0];
         element.textContent = matched;
         node.before(element);
@@ -108,15 +108,15 @@ class TextSplitter {
         segments.forEach(segment => {
           const element = document.createElement('span');
           const text = segment.segment || ' ';
-          [by, segment.segment.charCodeAt(0) === 32 && 'whitespace'].filter(Boolean).forEach(type => (element.dataset[type as string] = type !== 'whitespace' ? text : ''));
+          [by, segment.segment.charCodeAt(0) === 32 && 'whitespace'].filter(Boolean).forEach(type => element.setAttribute(`data-${type}`, type !== 'whitespace' ? text : ''));
           element.textContent = text;
           list.push(element);
           node.before(element);
         });
         node.remove();
       } else if (by === 'word' && node.nodeType === 1 && (node as HTMLElement).hasAttribute('data-_nobr_')) {
-        delete (node as HTMLElement).dataset._nobr_;
-        (node as HTMLElement).dataset.word = node.textContent!;
+        (node as HTMLElement).removeAttribute('data-_nobr_');
+        (node as HTMLElement).setAttribute('data-word', node.textContent!);
         list.push(node as HTMLElement);
       } else if (node.hasChildNodes()) {
         this.split(by, node as HTMLElement);
@@ -130,7 +130,7 @@ class TextSplitter {
     for (let i = 0; i < list.length; i++) {
       const item = list[i];
       if (previous && previous.textContent!.trim() && LBR_PROHIBIT_START_REGEXP.test([...new Intl.Segmenter((item.closest('[lang]') as HTMLElement)?.lang || document.documentElement.lang || 'en').segment(item.textContent!)].shift()!.segment)) {
-        previous.dataset[by] = previous.textContent! += item.textContent;
+        previous.setAttribute(`data-${by}`, (previous.textContent += item.textContent!));
         item.remove();
         list.splice(i, 1);
         i--;
@@ -142,7 +142,7 @@ class TextSplitter {
       const offset = index + 1;
       let next = list[offset];
       while (next && regexp.test(next.textContent!)) {
-        item.dataset[by] = item.textContent! += next.textContent;
+        item.setAttribute(`data-${by}`, (item.textContent! += next.textContent));
         next.remove();
         list.splice(offset, 1);
         next = list[offset];
@@ -153,7 +153,7 @@ class TextSplitter {
         concatNext(item, LBR_PROHIBIT_END_REGEXP, i);
         const next = list[i + 1];
         if (next && next.textContent!.trim()) {
-          next.dataset[by] = next.textContent = item.textContent! + next.textContent;
+          next.setAttribute(`data-${by}`, (next.textContent = item.textContent! + next.textContent));
           item.remove();
           list.splice(i, 1);
         }
@@ -165,7 +165,7 @@ class TextSplitter {
     if (by === 'char') {
       this.dom.querySelectorAll('[data-word]:not([data-whitespace])').forEach(element => {
         if (element.textContent) {
-          (element as HTMLElement).dataset.word = element.textContent;
+          element.setAttribute('data-word', element.textContent);
         } else {
           element.remove();
         }
