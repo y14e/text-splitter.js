@@ -26,7 +26,7 @@ class TextSplitter {
     this.split('char');
     if (this.options.lineBreakingRules && this.options.concatChar) this.lbr('char');
     this.words.forEach((word, i) => {
-      word.translate = false;
+      word.setAttribute('translate', 'no');
       word.style.setProperty('--word-index', i);
       if (!word.hasAttribute('data-whitespace')) {
         const alt = document.createElement('span');
@@ -47,14 +47,12 @@ class TextSplitter {
       }
     });
     this.chars.forEach((char, i) => {
-      char.ariaHidden = 'true';
+      char.setAttribute('aria-hidden', 'true');
       char.style.setProperty('--char-index', i);
     });
     this.dom.querySelectorAll(':is([data-word], [data-char]):not([data-whitespace])').forEach(element => {
-      element.style.cssText += `
-        display: inline-block;
-        white-space: nowrap;
-      `;
+      element.style.setProperty('display', 'inline-block');
+      element.style.setProperty('white-space', 'nowrap');
     });
     this.element.replaceChildren(...this.dom.childNodes);
     this.element.style.setProperty('--word-length', this.words.length);
@@ -91,7 +89,7 @@ class TextSplitter {
     const list = this[`${by}s`];
     [...node.childNodes].forEach(node => {
       if (node.nodeType === 3) {
-        const segments = [...new Intl.Segmenter(node.parentNode.closest('[lang]')?.lang || document.documentElement.lang || 'en', by === 'word' && this.options.wordSegmenter ? { granularity: 'word' } : {}).segment(node.textContent.replace(/[\r\n\t]/g, '').replace(/\s{2,}/g, ' '))];
+        const segments = [...new Intl.Segmenter(node.parentNode.closest('[lang]')?.getAttribute('lang') || document.documentElement.getAttribute('lang') || 'en', by === 'word' && this.options.wordSegmenter ? { granularity: 'word' } : {}).segment(node.textContent.replace(/[\r\n\t]/g, '').replace(/\s{2,}/g, ' '))];
         segments.forEach(segment => {
           const element = document.createElement('span');
           const text = segment.segment || ' ';
@@ -116,7 +114,7 @@ class TextSplitter {
     let previous = null;
     for (let i = 0; i < list.length; i++) {
       const item = list[i];
-      if (previous && previous.textContent.trim() && LBR_PROHIBIT_START_REGEXP.test([...new Intl.Segmenter(item.closest('[lang]')?.lang || document.documentElement.lang || 'en').segment(item.textContent)].shift().segment)) {
+      if (previous && previous.textContent.trim() && LBR_PROHIBIT_START_REGEXP.test([...new Intl.Segmenter(item.closest('[lang]')?.getAttribute('lang') || document.documentElement.getAttribute('lang') || 'en').segment(item.textContent)].shift().segment)) {
         previous.setAttribute(`data-${by}`, (previous.textContent += item.textContent));
         item.remove();
         list.splice(i, 1);
