@@ -3,7 +3,7 @@ const LBR_PROHIBIT_START_REGEXP = /^[[[\p{Pd}]--[―]]\p{Pe}\p{Pf}\p{Po}\u00A0�
 const LBR_PROHIBIT_END_REGEXP = /[\p{Pf}\p{Pi}\p{Ps}\p{Sc}\u00A0]$/u;
 const LBR_INSEPARATABLE_REGEXP = /[―]/u;
 
-type TextSplitterOptions = {
+type Props = {
   concatChar: boolean;
   lineBreakingRules: boolean;
   wordSegmenter: boolean;
@@ -11,19 +11,19 @@ type TextSplitterOptions = {
 
 class TextSplitter {
   element: HTMLElement;
-  options: Required<TextSplitterOptions>;
+  props: Props;
   original: string;
   dom: HTMLElement;
   words: HTMLElement[];
   chars: HTMLElement[];
 
-  constructor(element: HTMLElement, options?: Partial<TextSplitterOptions>) {
+  constructor(element: HTMLElement, props?: Partial<Props>) {
     this.element = element;
-    this.options = {
+    this.props = {
       concatChar: false,
       lineBreakingRules: true,
       wordSegmenter: false,
-      ...options,
+      ...props,
     };
     this.original = this.element.innerHTML;
     this.dom = this.element.cloneNode(true) as HTMLElement;
@@ -35,9 +35,9 @@ class TextSplitter {
   private initialize(): void {
     this.nobr();
     this.split('word');
-    if (this.options.lineBreakingRules && !this.options.concatChar) this.lbr('word');
+    if (this.props.lineBreakingRules && !this.props.concatChar) this.lbr('word');
     this.split('char');
-    if (this.options.lineBreakingRules && this.options.concatChar) this.lbr('char');
+    if (this.props.lineBreakingRules && this.props.concatChar) this.lbr('char');
     this.words.forEach((word, i) => {
       word.setAttribute('translate', 'no');
       word.style.setProperty('--word-index', String(i));
@@ -102,7 +102,7 @@ class TextSplitter {
     const list = this[`${by}s` as 'words' | 'chars'];
     [...node.childNodes].forEach(node => {
       if (node.nodeType === 3) {
-        const segments = [...new Intl.Segmenter(((node.parentNode as HTMLElement).closest('[lang]') as HTMLElement)?.getAttribute('lang') || document.documentElement.getAttribute('lang') || 'en', by === 'word' && this.options.wordSegmenter ? { granularity: 'word' } : {}).segment(node.textContent!.replace(/[\r\n\t]/g, '').replace(/\s{2,}/g, ' '))];
+        const segments = [...new Intl.Segmenter(((node.parentNode as HTMLElement).closest('[lang]') as HTMLElement)?.getAttribute('lang') || document.documentElement.getAttribute('lang') || 'en', by === 'word' && this.props.wordSegmenter ? { granularity: 'word' } : {}).segment(node.textContent!.replace(/[\r\n\t]/g, '').replace(/\s{2,}/g, ' '))];
         segments.forEach(segment => {
           const element = document.createElement('span');
           const text = segment.segment || ' ';
