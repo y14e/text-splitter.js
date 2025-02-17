@@ -17,7 +17,7 @@ class TextSplitter {
   words: HTMLElement[];
   chars: HTMLElement[];
 
-  constructor(element: HTMLElement, options?: TextSplitterOptions) {
+  constructor(element: HTMLElement, options?: Partial<TextSplitterOptions>) {
     this.element = element;
     this.options = {
       concatChar: false,
