@@ -76,7 +76,7 @@ class TextSplitter {
   }
 
   private nobr(node = this.dom): void {
-    if (node.nodeType === 3) {
+    if (node.nodeType === Node.TEXT_NODE) {
       const text = node.textContent!;
       const matches = [...text.matchAll(NOBR_REGEXP)];
       if (matches.length === 0) return;
@@ -101,7 +101,7 @@ class TextSplitter {
   private split(by: 'word' | 'char', node = this.dom): void {
     const list = this[`${by}s` as 'words' | 'chars'];
     [...node.childNodes].forEach(node => {
-      if (node.nodeType === 3) {
+      if (node.nodeType === Node.TEXT_NODE) {
         const segments = [...new Intl.Segmenter(((node.parentNode as HTMLElement).closest('[lang]') as HTMLElement).getAttribute('lang') || document.documentElement.getAttribute('lang') || 'en', by === 'word' && this.props.wordSegmenter ? { granularity: 'word' } : {}).segment(node.textContent!.replace(/[\r\n\t]/g, '').replace(/\s{2,}/g, ' '))];
         segments.forEach(segment => {
           const element = document.createElement('span');
@@ -112,7 +112,7 @@ class TextSplitter {
           node.before(element);
         });
         node.remove();
-      } else if (by === 'word' && node.nodeType === 1 && (node as HTMLElement).hasAttribute('data-_nobr_')) {
+      } else if (by === 'word' && node.nodeType === Node.ELEMENT_NODE && (node as HTMLElement).hasAttribute('data-_nobr_')) {
         (node as HTMLElement).removeAttribute('data-_nobr_');
         (node as HTMLElement).setAttribute('data-word', node.textContent!);
         list.push(node as HTMLElement);
