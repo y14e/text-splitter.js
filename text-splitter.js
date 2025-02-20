@@ -50,9 +50,9 @@ class TextSplitter {
       char.setAttribute('aria-hidden', 'true');
       char.style.setProperty('--char-index', i);
     });
-    this.dom.querySelectorAll(':is([data-word], [data-char]):not([data-whitespace])').forEach(element => {
-      element.style.setProperty('display', 'inline-block');
-      element.style.setProperty('white-space', 'nowrap');
+    this.dom.querySelectorAll(':is([data-word], [data-char]):not([data-whitespace])').forEach(span => {
+      span.style.setProperty('display', 'inline-block');
+      span.style.setProperty('white-space', 'nowrap');
     });
     this.element.replaceChildren(...this.dom.childNodes);
     this.element.style.setProperty('--word-length', this.words.length);
@@ -71,11 +71,11 @@ class TextSplitter {
       matches.forEach(match => {
         const offset = match.index;
         if (offset > index) node.before(text.slice(index, offset));
-        const element = document.createElement('span');
-        element.setAttribute('data-_nobr_', '');
+        const span = document.createElement('span');
+        span.setAttribute('data-_nobr_', '');
         const matched = match[0];
-        element.textContent = matched;
-        node.before(element);
+        span.textContent = matched;
+        node.before(span);
         index = offset + matched.length;
       });
       if (index < text.length) node.before(text.slice(index));
@@ -91,12 +91,12 @@ class TextSplitter {
       if (node.nodeType === Node.TEXT_NODE) {
         const segments = [...new Intl.Segmenter(node.parentNode.closest('[lang]')?.getAttribute('lang') || document.documentElement.getAttribute('lang') || 'en', by === 'word' && this.props.wordSegmenter ? { granularity: 'word' } : {}).segment(node.textContent.replace(/[\r\n\t]/g, '').replace(/\s{2,}/g, ' '))];
         segments.forEach(segment => {
-          const element = document.createElement('span');
+          const span = document.createElement('span');
           const text = segment.segment || ' ';
-          [by, segment.segment.charCodeAt(0) === 32 && 'whitespace'].filter(Boolean).forEach(type => element.setAttribute(`data-${type}`, type !== 'whitespace' ? text : ''));
-          element.textContent = text;
-          list.push(element);
-          node.before(element);
+          [by, segment.segment.charCodeAt(0) === 32 && 'whitespace'].filter(Boolean).forEach(type => span.setAttribute(`data-${type}`, type !== 'whitespace' ? text : ''));
+          span.textContent = text;
+          list.push(span);
+          node.before(span);
         });
         node.remove();
       } else if (by === 'word' && node.nodeType === Node.ELEMENT_NODE && node.hasAttribute('data-_nobr_')) {
@@ -123,7 +123,7 @@ class TextSplitter {
         previous = item;
       }
     }
-    const concatNext = (item, regexp, index) => {
+    const concat = (item, regexp, index) => {
       const offset = index + 1;
       let next = list[offset];
       while (next && regexp.test(next.textContent)) {
@@ -135,7 +135,7 @@ class TextSplitter {
     };
     list.forEach((item, i) => {
       if (LBR_PROHIBIT_END_REGEXP.test(item.textContent)) {
-        concatNext(item, LBR_PROHIBIT_END_REGEXP, i);
+        concat(item, LBR_PROHIBIT_END_REGEXP, i);
         const next = list[i + 1];
         if (next && next.textContent.trim()) {
           next.setAttribute(`data-${by}`, (next.textContent = item.textContent + next.textContent));
@@ -145,14 +145,14 @@ class TextSplitter {
       }
     });
     list.forEach((item, i) => {
-      if (LBR_INSEPARATABLE_REGEXP.test(item.textContent)) concatNext(item, LBR_INSEPARATABLE_REGEXP, i);
+      if (LBR_INSEPARATABLE_REGEXP.test(item.textContent)) concat(item, LBR_INSEPARATABLE_REGEXP, i);
     });
     if (by === 'char') {
-      this.dom.querySelectorAll('[data-word]:not([data-whitespace])').forEach(element => {
-        if (element.textContent) {
-          element.setAttribute('data-word', element.textContent);
+      this.dom.querySelectorAll('[data-word]:not([data-whitespace])').forEach(span => {
+        if (span.textContent) {
+          span.setAttribute('data-word', span.textContent);
         } else {
-          element.remove();
+          span.remove();
         }
       });
     }
