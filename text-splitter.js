@@ -30,6 +30,7 @@ class TextSplitter {
       word.style.setProperty('--word-index', i);
       if (!word.hasAttribute('data-whitespace')) {
         const alt = document.createElement('span');
+        alt.setAttribute('data-alt', '');
         alt.style.cssText += `
           border: 0;
           clip: rect(0, 0, 0, 0);
