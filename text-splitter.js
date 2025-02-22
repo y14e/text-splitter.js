@@ -4,16 +4,16 @@ const LBR_PROHIBIT_END_REGEXP = /[\p{Pf}\p{Pi}\p{Ps}\p{Sc}\u00A0]$/u;
 const LBR_INSEPARATABLE_REGEXP = /[―]/u;
 
 class TextSplitter {
-  constructor(element, props) {
-    this.element = element;
+  constructor(root, props) {
+    this.root = root;
     this.props = {
       concatChar: false,
       lineBreakingRules: true,
       wordSegmenter: false,
       ...props,
     };
-    this.original = this.element.innerHTML;
-    this.dom = this.element.cloneNode(true);
+    this.original = this.root.innerHTML;
+    this.dom = this.root.cloneNode(true);
     this.words = [];
     this.chars = [];
     this.initialize();
@@ -55,13 +55,13 @@ class TextSplitter {
       span.style.setProperty('display', 'inline-block');
       span.style.setProperty('white-space', 'nowrap');
     });
-    this.element.replaceChildren(...this.dom.childNodes);
-    this.element.style.setProperty('--word-length', this.words.length);
-    this.element.style.setProperty('--char-length', this.chars.length);
-    [...this.element.querySelectorAll(':scope > :not([data-word]) [data-char][data-whitespace]')].forEach(whitespace => {
+    this.root.replaceChildren(...this.dom.childNodes);
+    this.root.style.setProperty('--word-length', this.words.length);
+    this.root.style.setProperty('--char-length', this.chars.length);
+    [...this.root.querySelectorAll(':scope > :not([data-word]) [data-char][data-whitespace]')].forEach(whitespace => {
       if (window.getComputedStyle(whitespace).getPropertyValue('display') !== 'inline') whitespace.innerHTML = '&nbsp;';
     });
-    this.element.setAttribute('data-text-splitter-initialized', '');
+    this.root.setAttribute('data-text-splitter-initialized', '');
   }
 
   nobr(node = this.dom) {
@@ -161,9 +161,9 @@ class TextSplitter {
   }
 
   revert() {
-    this.element.style.removeProperty('--word-length');
-    this.element.style.removeProperty('--char-length');
-    this.element.innerHTML = this.original;
+    this.root.style.removeProperty('--word-length');
+    this.root.style.removeProperty('--char-length');
+    this.root.innerHTML = this.original;
   }
 }
 
