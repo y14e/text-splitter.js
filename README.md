@@ -1,5 +1,5 @@
 # text-splitter.js
-A text splitter in JS for CSS animations. Supports line breaking rules (禁則処理).
+A text splitter in JS for CSS animations. Supports line breaking rules.
 ## Installation
 ```js
 import TextSplitter from './text-splitter.js';
