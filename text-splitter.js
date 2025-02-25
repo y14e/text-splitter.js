@@ -4,14 +4,14 @@ const LBR_PROHIBIT_END_REGEXP = /[\p{Pf}\p{Pi}\p{Ps}\p{Sc}\u00A0]$/u;
 const LBR_INSEPARATABLE_REGEXP = /[―]/u;
 
 class TextSplitter {
-  constructor(root, props) {
+  constructor(root, options) {
     this.root = root;
-    this.props = {
+    this.defaults = {
       concatChar: false,
       lineBreakingRules: true,
       wordSegmenter: false,
-      ...props,
     };
+    this.settings = { ...this.defaults, ...options };
     this.original = this.root.innerHTML;
     this.dom = this.root.cloneNode(true);
     this.words = [];
@@ -22,9 +22,9 @@ class TextSplitter {
   initialize() {
     this.nobr();
     this.split('word');
-    if (this.props.lineBreakingRules && !this.props.concatChar) this.lbr('word');
+    if (this.settings.lineBreakingRules && !this.settings.concatChar) this.lbr('word');
     this.split('char');
-    if (this.props.lineBreakingRules && this.props.concatChar) this.lbr('char');
+    if (this.settings.lineBreakingRules && this.settings.concatChar) this.lbr('char');
     this.words.forEach((word, i) => {
       word.setAttribute('translate', 'no');
       word.style.setProperty('--word-index', i);
@@ -91,7 +91,7 @@ class TextSplitter {
     const list = this[`${by}s`];
     [...node.childNodes].forEach(node => {
       if (node.nodeType === Node.TEXT_NODE) {
-        const segments = [...new Intl.Segmenter(node.parentNode.closest('[lang]')?.getAttribute('lang') || document.documentElement.getAttribute('lang') || 'en', by === 'word' && this.props.wordSegmenter ? { granularity: 'word' } : {}).segment(node.textContent.replace(/[\r\n\t]/g, '').replace(/\s{2,}/g, ' '))];
+        const segments = [...new Intl.Segmenter(node.parentNode.closest('[lang]')?.getAttribute('lang') || document.documentElement.getAttribute('lang') || 'en', by === 'word' && this.settings.wordSegmenter ? { granularity: 'word' } : {}).segment(node.textContent.replace(/[\r\n\t]/g, '').replace(/\s{2,}/g, ' '))];
         segments.forEach(segment => {
           const span = document.createElement('span');
           const text = segment.segment || ' ';
