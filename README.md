@@ -4,8 +4,8 @@ A text splitter in JS for CSS animations. Supports line breaking rules.
 ```js
 import TextSplitter from './text-splitter.js';
 
-const ts = new TextSplitter(...);
+const myTextSplitter = new TextSplitter(...);
 ```
 ## Demo
-- https://y14e.github.io/text-splitter.js/
-- https://y14e.github.io/text-splitter.js/test.html
+- https://y14e.github.io/text-splitter-js/
+- https://y14e.github.io/text-splitter-js/test.html
